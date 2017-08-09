@@ -63,8 +63,6 @@ export function _deactivateOldActiveTab( state )
  */
 export function _setActiveTab( index, state )
 {
-    // let newState = state;
-    //
     let newActiveTab = state[ index ];
     let updatedState = [ ...state ];
 

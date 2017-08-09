@@ -40,19 +40,16 @@ export default class Browser extends Component
         const { addTab, closeTab, closeActiveTab, reopenTab } = this.props;
         const addressBar = this.address.refs.addressBar;
 
+        const theBrowser = this;
         ipcRenderer.on( 'command', ( ...args ) =>
         {
-            // var args = [...arguments;
-            // console.log( 'ipc args' , args );
             const event = args[0];
             const type = args[1];
-            const { tabContents } = this;
+            const { tabContents } = theBrowser;
             const activeTab = tabContents.getActiveTab();
 
             console.log( 'type', type );
             const extraArgs = args.slice( 2 );
-
-            // console.log( 'extraArgs'  , extraArgs );
 
             switch ( type )
             {
