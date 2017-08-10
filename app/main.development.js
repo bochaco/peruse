@@ -3,7 +3,7 @@
 import { app, BrowserWindow, BrowserView, ipcMain, webContents } from 'electron';
 import MenuBuilder from './menu';
 import windowStateKeeper from 'electron-window-state';
-import loadCorePackages from './corePackageLoader';
+import loadCorePackages, { setupBrowserAPIs } from './corePackages';
 
 import configureStore from './store/configureStore';
 import { mainSync } from './store/electronStoreSyncer';
@@ -81,7 +81,6 @@ export default function openWindow()
         // before show lets load state
         mainWindow.show();
         mainWindow.focus();
-
 
     } );
 
@@ -161,6 +160,7 @@ app.on( 'ready', async () =>
     //
     // Many things could be passed here for customisation...
     loadCorePackages( store );
+    setupBrowserAPIs( );
     openWindow();
     handleCommands( store );
 } );

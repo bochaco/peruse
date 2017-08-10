@@ -69,8 +69,8 @@ const initSafeBrowsing = ( store ) =>
     console.log( 'Registering SAFE Network Protocols, BUT COULD BE.' );
 
     // applySafeProtocolStandardsToAll();
-
-    // setup the protocol handler
+    //
+    // // setup the protocol handler
     // protocol.registerHttpProtocol('safe', safeHandler, err => {
     //     if (err)
     //     throw ProtocolSetupError(err, 'Failed to create protocol: safe')

@@ -177,6 +177,7 @@
     "font-awesome": "^4.7.0",
     "history": "^4.6.1",
     "immutable": "^3.8.1",
+    "pauls-electron-rpc": "^4.0.1",
     "postcss": "^6.0.8",
     "postcss-loader": "^2.0.6",
     "postcss-scss": "^1.0.2",

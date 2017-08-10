@@ -117,6 +117,10 @@ export default class Tab extends Component {
         wv.plugins = true;
         // wv.preload = injectPath
         //
+        console.log("DO WE HAVE THE APIs?", window.fakeAPI );
+
+        wv.executeJavaScript( `window.fakeAPI = ${ window.fakeAPI }`);
+        wv.executeJavaScript( `window.fakeAPI('haha')`);
 
         const menu = Menu.buildFromTemplate([
             { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
@@ -194,6 +198,8 @@ export default class Tab extends Component {
         if (SHOW_DEVTOOLS) {
             webContents.openDevTools({ detach: true });
         }
+        webview.executeJavaScript( `window.fakeAPI('haha')`);
+        webview.executeJavaScript( `console.log('nananananaa')`);
 
         this.updateBrowserState({ loading: false, mountedAndReady : true });
 
@@ -219,6 +225,8 @@ export default class Tab extends Component {
     }
 
     didStopLoading( ) {
+        console.log("STOPPED LOADING");
+        console.log( new Date() );
         this.updateBrowserState({ loading: false });
     }
 
