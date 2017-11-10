@@ -1,5 +1,5 @@
 import Hapi from 'hapi';
-import { CONFIG, isRunningUnpacked } from 'constants';
+import { CONFIG, isRunningProduction } from 'constants';
 import logger from 'logger';
 
 import url from 'url';
@@ -64,16 +64,20 @@ export const startServer = async ( ) =>
 {
     logger.info( 'Starting connection to safe' );
 
+    logger.info('[[[[[????[[isRunningProduction]]]: ', isRunningProduction)
     try
     {
-        if ( isRunningUnpacked )
+        // can run prod in dev...?
+        if ( isRunningProduction )
         {
-            appObj = await initMock();
-            appObj.reconnect();
+            logger.info('[[[[[[[[[[[[[[[[[RUNNING PROD]]]]]]]]]]]]]]]]]')
+            // appObj = await initAnon();
         }
         else
         {
-            appObj = await initAnon();
+            logger.info('[[[[[[[[[[[[[[[[[RUNNING DEV]]]]]]]]]]]]]]]]]')
+            // appObj = await initMock();
+            // appObj.reconnect();
         }
     }
     catch ( e )

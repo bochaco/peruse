@@ -1,6 +1,3 @@
-import os from 'os';
-import path from 'path';
-import fs from 'fs';
 import util from 'util';
 import { env } from 'constants';
 // error, warn, info, verbose, debug, silly
@@ -8,7 +5,7 @@ import { env } from 'constants';
 //must be require?
 var log = require('electron-log');
 // Log level
-log.transports.console.level = 'warn';
+log.transports.console.level = 'verbose';
 
 /**
  * Set output format template. Available variables:
@@ -31,7 +28,7 @@ log.transports.file.format = '{h}:{i}:{s}:{ms} {text}';
 log.transports.file.maxSize = 5 * 1024 * 1024;
 
 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-log.info(`Started with env_var: ${env}`);
+log.info( `      Started with node env: ${env}`);
 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
 export default log;
