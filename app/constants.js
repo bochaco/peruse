@@ -1,11 +1,19 @@
 import path from 'path';
+//TODO: Can we just make logger global in webpack? Is that sensible?s
+// import logger from 'logger';
 import { app } from 'electron';
 import pkg from 'appPackage';
+
+var log = require('electron-log');
+
 
 export const isRunningUnpacked = process.execPath.match( /[\\/]electron/ );
 export const isRunningPackaged = !isRunningUnpacked;
 export const env = process.env.NODE_ENV || 'production';
-export const runningProduction = /^prod/.test( env );
+
+log.info('ENVVVVVV', env)
+export const isRunningProduction = /^prod/.test( env );
+log.info('ENVVVVVV', isRunningProduction)
 
 
 let libPath;
