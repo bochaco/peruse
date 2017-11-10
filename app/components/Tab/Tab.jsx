@@ -278,8 +278,6 @@ export default class Tab extends Component
     {
         const { updateTab, index, updateAddress } = this.props;
         const { url } = e;
-
-        log.info( 'didNavvvv' );
         const noTrailingSlashUrl = removeTrailingSlash( url );
 
         // TODO: Actually overwrite history for redirect
@@ -333,13 +331,10 @@ export default class Tab extends Component
 
         const index = this.props.index;
 
-        log.info( 'will navvvvv' );
         this.props.updateTab( { index, url } );
 
         if ( this.props.isActiveTab )
         {
-            log.info( 'will navvvvv && updating addresssss' );
-
             // TODO ensure url structure in reducer, as opposed to here/everywhere
             this.props.updateAddress( removeTrailingSlash( url ) );
         }

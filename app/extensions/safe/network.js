@@ -163,40 +163,6 @@ export const requestSharedMDAuth = async ( app, publicName ) =>
     }
 };
 
-
-export const connectAnon = ( appObj ) =>
-{
-
-    // console.log( '"trying to connecctt"' );
-    // return new Promise( ( resolve, reject ) =>
-    // {
-    //     if ( !appObj )
-    //     {
-    //         console.log( '"NO APP Object()"' );
-    //         return reject( new Error( 'Unexpected error. SAFE App library not initialised' ) );
-    //     }
-    //     else if ( appObj.networkState === 'Init' )
-    //     {
-    //         console.log( '"trying to iniitttttt"' );
-    //
-    //         return appObj.auth.genConnUri()
-    //             .then( ( connReq ) => ipc.sendAuthReq( connReq, true, ( err, res ) =>
-    //             {
-    //                 if ( err )
-    //                 {
-    //                     return reject( new Error( 'Unable to get connection information: ', err ) );
-    //                 }
-    //                 console.log( '"HERERERERERERERRRRRR to connecctt"', res );
-    //
-    //                 return appObj.auth.loginFromURI( res )
-    //                     .then( ( app ) => resolve() );
-    //             } ) );
-    //     }
-    //     resolve();
-    // } );
-};
-
-
 export const connectAuthed = async ( uri, netStatusCallback ) =>
 {
     if ( !netStatusCallback )
@@ -266,8 +232,6 @@ export const initMock = async () =>
     {
         let app = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH } );
         app = await app.auth.loginForTest( APP_INFO.permissions );
-
-        // logger.info( `zzzzzzzz:`, z);
         return app;
     }
     catch ( err )

@@ -7,11 +7,6 @@ import mime from 'mime';
 
 import { initAnon, initMock, getAppObj } from './network';
 
-// const safeApp = require( '@maidsafe/safe-node-app' );
-// const ipcMain = require( 'electron' ).ipcMain; // electron deps will be avaible inside browser
-
-// const app = require( 'electron' ).app;
-
 const server = new Hapi.Server();
 
 let appObj = null;
