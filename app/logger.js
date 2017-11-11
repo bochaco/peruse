@@ -1,3 +1,4 @@
+import {app} from 'electron';
 import util from 'util';
 import { env } from 'constants';
 // error, warn, info, verbose, debug, silly
@@ -30,5 +31,12 @@ log.transports.file.maxSize = 5 * 1024 * 1024;
 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 log.info( `      Started with node env: ${env}`);
 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+
+
+process.on('uncaughtException', (err) => {
+  log.error('whoops! there was an error');
+  log.error(err);
+});
 
 export default log;
