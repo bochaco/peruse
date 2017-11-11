@@ -20,10 +20,8 @@
     HELLO EVERYONE
     <script>
       {
-        // Dynamically include DLL if in development
+        // Dynamically include DLL if in development/live-dev
         if (process.env.IS_UNPACKED === 'true') {
-            document.body.createTextNode('dllScript');
-            // var t = document. ("Hello World");
           const dllScript = document.createElement('script');
           dllScript.src = '../dll/vendor.dll.js';
           document.body.appendChild(dllScript);

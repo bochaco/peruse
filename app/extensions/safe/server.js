@@ -71,12 +71,12 @@ export const startServer = async ( ) =>
         if ( isRunningProduction )
         {
             logger.info('[[[[[[[[[[[[[[[[[RUNNING PROD]]]]]]]]]]]]]]]]]')
-            // appObj = await initAnon();
+            appObj = await initAnon();
         }
         else
         {
             logger.info('[[[[[[[[[[[[[[[[[RUNNING DEV]]]]]]]]]]]]]]]]]')
-            // appObj = await initMock();
+            appObj = await initMock();
             // appObj.reconnect();
         }
     }
