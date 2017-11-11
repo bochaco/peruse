@@ -105,7 +105,7 @@ app.on( 'ready', async () =>
 {
     logger.info( 'App Ready' );
 
-    if ( process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true' )
+    if ( isRunningPackaged || process.env.DEBUG_PROD === 'true' )
     {
         await installExtensions();
     }

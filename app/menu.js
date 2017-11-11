@@ -5,6 +5,7 @@ import {
     activeTabForwards,
     activeTabBackwards
 } from './actions/tabs_actions';
+import { isRunningUnpacked } from 'constants';
 import { getLastClosedTab } from './reducers/tabs';
 
 export default class MenuBuilder
@@ -20,7 +21,7 @@ export default class MenuBuilder
 
     buildMenu()
     {
-        if ( process.env.NODE_ENV === 'development' )
+        if ( isRunningUnpacked )
         {
             this.setupDevelopmentEnvironment();
         }

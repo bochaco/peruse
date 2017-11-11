@@ -17,10 +17,13 @@
   </head>
   <body>
     <div id="root"></div>
+    HELLO EVERYONE
     <script>
       {
         // Dynamically include DLL if in development
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.IS_UNPACKED === 'true') {
+            document.body.createTextNode('dllScript');
+            // var t = document. ("Hello World");
           const dllScript = document.createElement('script');
           dllScript.src = '../dll/vendor.dll.js';
           document.body.appendChild(dllScript);
