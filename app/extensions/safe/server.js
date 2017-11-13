@@ -4,6 +4,7 @@ import logger from 'logger';
 
 import url from 'url';
 import mime from 'mime';
+import path from 'path';
 
 import { initAnon, initMock, getAppObj } from './network';
 
@@ -48,9 +49,34 @@ server.route( {
 
             logger.info( `Network state on server conn: ${app.networkState}` );
 
+
+            const parsedUrl = url.parse(link);
+            let mimeType = 'text/html';
+            // let fileExt
+            if( parsedUrl.pathname && parsedUrl.pathname.length > 1 )
+            {
+                logger.info('........thereispathname', parsedUrl.pathname)
+                const fileExt =  path.extname(path.basename(parsedUrl.pathname));
+                mimeType = mime.getType(fileExt);
+            }
+
+
+
             const data = await app.webFetch( link );
-            logger.info( data );
-            return reply( data.toString() );
+            logger.info( 'mime for responsessssssssssssssss>>>>>>>>>>>>>>>',mimeType );
+
+            if( mimeType === 'text/html' )
+            {
+                logger.info( ' type html', mimeType );
+                return reply( data.toString() );
+            }
+            else
+            {
+                logger.info( 'mimmmeeeeeee type NOT html', mimeType );
+                return reply( data ).type( mimeType );
+            }
+
+            //else stream handling
         }
         catch ( e )
         {

@@ -14,7 +14,8 @@ And to run dev mode:
 - `yarn dev`
 
 Want to run 'production' variables, but with hot reloading?:
-- `yarn live-dev`
+- `yarn live-dev` Will work _soon_. Right now it's hinging upon registering the 
+url scheme for opening the app, which won't work until we've gotten all schemes going.
 
 And to package:
 - `yarn package`

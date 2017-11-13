@@ -10,7 +10,7 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, protocol } from 'electron';
 import logger from 'logger';
 import { isRunningUnpacked, isRunningPackaged } from 'constants';
 
@@ -34,6 +34,7 @@ import { mainSync } from './store/electronStoreSyncer';
 const mainWindow = null;
 mainSync( store );
 
+protocol.registerStandardSchemes(['safe']);
 
 if ( isRunningPackaged )
 {
