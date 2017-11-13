@@ -1,6 +1,6 @@
 {
   "name": "peruse",
-  "identifier": "net.maidsafe.peruse-browser",
+  "identifier": "nett.maidsafe.peruse-browser",
   "productName": "Peruse Browser",
   "version": "0.10.0",
   "description": "Electron web browser. React/redux powered with an aim of extensiblity.",
@@ -57,9 +57,8 @@
       "name": "SAFE",
       "schemes": [
         "safe",
-        "safe-auth",
-        "safe-bmV0Lm1haWRzYWZlLnBlcnVzZS1icm93c2Vy"
-      ]
+        "safe-auth"
+    ]
     },
     "win": {
       "target": "dir"

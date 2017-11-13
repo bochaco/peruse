@@ -38,7 +38,9 @@ export const handleIPCResponse = async( res ) =>
 {
     try
     {
-        logger.info( `Received URL response` );
+        logger.info( `Received URL response`, res );
+
+        // this is happening before we have the response....
         appObj = await appObj.auth.loginFromURI( res );
     }
     catch(e)
@@ -53,8 +55,8 @@ export const initAnon = async () =>
 
     try
     {
-        // TODO: register scheme
-        appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, registerScheme: false, logger } );
+        // TODO: register scheme. Use genConnUri not genAuth
+        appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, logger } );
         const authReq = await appObj.auth.genAuthUri( {} );
 
         // commented out until system_uri open issue is solved for osx
