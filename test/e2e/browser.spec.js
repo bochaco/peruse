@@ -54,6 +54,24 @@ describe( 'main window', () =>
     } );
 
 
+    it( 'cannot open http:// protocol links', async () =>
+    {
+        const { client } = app;
+        const tabIndex = await newTab( app );
+        await navigateTo( app, 'http://example.com' );
+        await client.waitForExist( BROWSER_UI.ADDRESS_INPUT );
+        const address = await client.getValue( BROWSER_UI.ADDRESS_INPUT );
+
+        await client.windowByIndex( tabIndex );
+
+        const clientUrl = await client.getUrl();
+        const parsedUrl = urlParse( clientUrl );
+        // const clientUrl = removeTrailingSlash ( await client.getUrl() );
+
+        expect( parsedUrl.protocol ).toBe( 'safe:' );
+
+    } );
+
     it( 'has safe:// protocol', async () =>
     {
         const { client } = app;
