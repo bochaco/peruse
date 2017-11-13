@@ -6,7 +6,7 @@ import { CONFIG, PROTOCOLS } from 'constants';
 
 const registerSafeProtocol = () =>
 {
-    logger.warn( `${PROTOCOLS.SAFE} Registeringgg` );
+    logger.verbose( `${PROTOCOLS.SAFE} Registering` );
 
     // bind to partition.
     const partition = CONFIG.SAFE_PARTITION;
@@ -15,7 +15,7 @@ const registerSafeProtocol = () =>
     // TODO: Is it better to have one safe protocol. Would ports automatically routing locally make things simpler?
     ses.protocol.registerHttpProtocol( PROTOCOLS.SAFE, ( req, cb ) =>
     {
-        logger.verbose( `safe:// req being parsed: ${req.url}` );
+        logger.verbose( `safe:// req url being parsed: ${req.url}` );
         const parsedUrl = url.parse( req.url );
         let host = parsedUrl.host;
 

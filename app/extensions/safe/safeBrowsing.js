@@ -21,18 +21,17 @@ const blockNonSAFERequests = () =>
 
     safeSession.webRequest.onBeforeRequest( filter, ( details, callback ) =>
     {
-        // const referrer = url.parse( details.referrer );
         const target = url.parse( details.url );
 
         if ( target.protocol === 'safe:' || target.protocol === 'chrome-devtools:' ||
             isForSafeServer(target) )
         {
-            logger.verbose( `going to safe API or somewhere safe at least... ${details.url}` );
+            logger.debug( `Allowing url ${details.url}` );
             callback( {} );
             return;
         }
 
-        logger.verbose( 'Blocked req:', target );
+        logger.debug( 'Blocked req:', details.url );
         callback( { cancel: true } );
     } );
 };

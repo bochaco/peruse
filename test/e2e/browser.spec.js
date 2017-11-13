@@ -101,7 +101,6 @@ describe( 'main window', () =>
         await client.windowByIndex( tabIndex );
 
         const clientUrl = await client.getUrl();
-        // const clientUrl = removeTrailingSlash ( await client.getUrl() );
 
         expect( clientUrl ).toBe( 'safe://example.com/' );
 
