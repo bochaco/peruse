@@ -103,7 +103,7 @@ describe( 'main window', () =>
         const clientUrl = await client.getUrl();
         // const clientUrl = removeTrailingSlash ( await client.getUrl() );
 
-        expect( clientUrl ).toBe( 'safe://example.com' );
+        expect( clientUrl ).toBe( 'safe://example.com/' );
 
         //address should have no slash
         expect( address ).toBe( 'safe://example.com' );
