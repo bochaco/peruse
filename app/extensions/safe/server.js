@@ -52,31 +52,19 @@ server.route( {
 
             const parsedUrl = url.parse(link);
             let mimeType = 'text/html';
-            // let fileExt
-            if( parsedUrl.pathname && parsedUrl.pathname.length > 1 )
+
+            let pathname = parsedUrl.pathname;
+
+            // ie not just '/'
+            if( pathname && pathname.length > 1 )
             {
-                logger.info('........thereispathname', parsedUrl.pathname)
-                const fileExt =  path.extname(path.basename(parsedUrl.pathname));
+                const fileExt =  path.extname(path.basename(pathname));
                 mimeType = mime.getType(fileExt);
             }
 
-
-
             const data = await app.webFetch( link );
-            logger.info( 'mime for responsessssssssssssssss>>>>>>>>>>>>>>>',mimeType );
 
-            if( mimeType === 'text/html' )
-            {
-                logger.info( ' type html', mimeType );
-                return reply( data.toString() );
-            }
-            else
-            {
-                logger.info( 'mimmmeeeeeee type NOT html', mimeType );
-                return reply( data ).type( mimeType );
-            }
-
-            //else stream handling
+            return reply( data ).type( mimeType );
         }
         catch ( e )
         {
@@ -88,28 +76,14 @@ server.route( {
 
 export const startServer = async ( ) =>
 {
-    logger.info( 'Starting connection to safe' );
-
-    logger.info('[[[[[????[[isRunningProduction]]]: ', isRunningProduction)
-    try
+    // can run prod in dev...?
+    if ( isRunningProduction )
     {
-        // can run prod in dev...?
-        if ( isRunningProduction )
-        {
-            logger.info('[[[[[[[[[[[[[[[[[RUNNING PROD]]]]]]]]]]]]]]]]]')
-            appObj = await initAnon();
-        }
-        else
-        {
-            logger.info('[[[[[[[[[[[[[[[[[RUNNING DEV]]]]]]]]]]]]]]]]]')
-            appObj = await initMock();
-            // appObj.reconnect();
-        }
+        appObj = await initAnon();
     }
-    catch ( e )
+    else
     {
-        logger.error( e );
-        throw e;
+        appObj = await initMock();
     }
 
     server.start( ( err ) =>
