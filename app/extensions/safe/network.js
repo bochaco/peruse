@@ -5,7 +5,7 @@ import { app } from 'electron';
 
 import { openExternal } from './api/utils';
 
-let appObj;
+let appObj = null;
 // let receivedResponseQ = [];
 
 
@@ -26,7 +26,8 @@ export const authFromQueue = async() =>
 
 const authFromRes = async( res ) =>
 {
-    logger.info('trying to authhhhhhhhh', appObj)
+    logger.info('trying to authhhhhhhhh', appObj);
+
     appObj = await appObj.auth.loginFromURI( res );
 }
 
@@ -61,10 +62,11 @@ export const handleIPCResponse = async ( res ) =>
 
     try
     {
-        logger.info( 'Received URL response', res );
+        logger.info( 'Received URLLLLL response', res );
 
         if ( appObj )
         {
+            logger.info('yeh appobj exists wtf')
             // this is happening before we have the response....
             authFromRes( res );
         }
@@ -75,6 +77,7 @@ export const handleIPCResponse = async ( res ) =>
     }
     catch ( e )
     {
+        logger.error( 'its in handling res' );
         logger.error( e );
     }
 
@@ -276,11 +279,12 @@ export const reconnect = ( app ) =>
  */
 export const initMock = async () =>
 {
+    logger.info('initing mock')
     try
     {
-        let app = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH } );
-        app = await app.auth.loginForTest( APP_INFO.permissions );
-        return app;
+        appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH } );
+        appObj = await appObj.auth.loginForTest( APP_INFO.permissions );
+        return appObj;
     }
     catch ( err )
     {
