@@ -12,7 +12,7 @@
  */
 import { app, BrowserWindow, protocol } from 'electron';
 import logger from 'logger';
-import { isRunningUnpacked, isRunningPackaged } from 'constants';
+import { isRunningUnpacked, isRunningDevelopment, isRunningPackaged } from 'constants';
 
 import openWindow from './openWindow';
 import loadExtensions from './extensions';
@@ -106,7 +106,7 @@ app.on( 'ready', async () =>
 {
     logger.info( 'App Ready' );
 
-    if ( isRunningPackaged || process.env.DEBUG_PROD === 'true' )
+    if ( isRunningDevelopment || process.env.DEBUG_PROD === 'true' )
     {
         await installExtensions();
     }

@@ -12,7 +12,9 @@ export const isRunningUnpacked = process.execPath.match( /[\\/]electron/ );
 export const isRunningPackaged = !isRunningUnpacked;
 export const env = process.env.NODE_ENV || 'production';
 
+// TODO: For live-prod we need to setup menu/devtools etc, while ensuring it doesnt affect e2e tests
 export const isRunningProduction = /^prod/.test( env );
+export const isRunningDevelopment = /^dev/.test( env );
 
 let libPath;
 
