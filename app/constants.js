@@ -1,11 +1,11 @@
 import path from 'path';
-//TODO: Can we just make logger global in webpack? Is that sensible?s
+// TODO: Can we just make logger global in webpack? Is that sensible?s
 // import logger from 'logger';
 import { app } from 'electron';
 import pkg from 'appPackage';
 
 // TODO: We can't import logger direct here due to webpack??? (alias from another alias???). Find out why not...
-var log = require('electron-log');
+const log = require( 'electron-log' );
 
 
 export const isRunningUnpacked = process.execPath.match( /[\\/]electron/ );
@@ -40,13 +40,27 @@ export const CONFIG = {
     LIB_PATH       : libPath
 };
 
+export const LIB_PATH = {
+    PTHREAD   : './libwinpthread-1.dll',
+    SAFE_AUTH : {
+        win32  : './safe_authenticator.dll',
+        darwin : './libsafe_authenticator.dylib',
+        linux  : './libsafe_authenticator.so'
+    },
+    SYSTEM_URI : {
+        win32  : './system_uri.dll',
+        darwin : './libsystem_uri.dylib',
+        linux  : './libsystem_uri.so'
+    }
+};
+
 
 const appInfo = {
     info : {
-        id             : pkg.identifier,
-        scope          : null,
-        name           : pkg.productName,
-        vendor         : pkg.author.name
+        id     : pkg.identifier,
+        scope  : null,
+        name   : pkg.productName,
+        vendor : pkg.author.name
         // ,
         // customExecPath : isRunningUnpacked ? `${process.execPath} ${app.getAppPath()}` : app.getPath( 'exe' )
     },

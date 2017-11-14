@@ -4,7 +4,8 @@ import logger from 'logger';
 import { CONFIG } from 'constants';
 import startServer from './server';
 
-import registerSafeProtocol from './protocolHandling';
+import registerSafeProtocol from './protocols/safe';
+import registerSafeAuthProtocol from './protocols/safe-auth';
 
 const isForSafeServer = ( parsedUrlObject ) =>
 {
@@ -23,7 +24,7 @@ const blockNonSAFERequests = () =>
     {
         const target = url.parse( details.url );
 
-        if ( target.protocol === 'safe:' || target.protocol === 'chrome-devtools:' ||
+        if ( target.protocol === 'safe:' || target.protocol === 'safe-auth:' || target.protocol === 'chrome-devtools:' ||
             isForSafeServer(target) )
         {
             logger.debug( `Allowing url ${details.url}` );
@@ -42,6 +43,7 @@ const initSafeBrowsing = ( store ) =>
 
     startServer(store);
     registerSafeProtocol();
+    // registerSafeAuthProtocol();
     blockNonSAFERequests();
 
     // if we want to do something with the store, we would do it here.
