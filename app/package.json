@@ -5,7 +5,8 @@
   "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "main": "./main.js",
   "scripts" : {
-      "rebuild" : "npm rebuild --runtime=electron --disturl=https://atom.io/download/atom-shell --build-from-source"
+      "rebuild" : "npm rebuild --runtime=electron --disturl=https://atom.io/download/atom-shell --build-from-source",
+      "postinstall": "cd extensions/safe && yarn"
   },
   "author": {
     "name": "Josh Wilson",
@@ -15,54 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "@maidsafe/safe-node-app": "0.4.1",
-    "react-icons": "^2.2.3",
-    "deps_downloader": "https://s3.eu-west-2.amazonaws.com/deps-downloader/deps_downloader-0.1.0.tgz"
-},
-"download_deps": {
-   "system_uri": {
-     "mirror": "https://s3.eu-west-2.amazonaws.com/system-uri",
-     "version": "v0.2.3",
-     "targetDir": "dist",
-     "filePattern": "^.*\\.(dll|so|dylib)$"
-   },
-   "safe_authenticator": {
-     "mirror": "https://s3.eu-west-2.amazonaws.com/safe-client-libs",
-     "version": "v0.4.0",
-     "targetDir": "dist",
-     "filename": "safe_authenticator",
-     "filePattern": "^.*\\.(dll|so|dylib)$",
-     "force": true
-   },
-   "ENV": {
-     "dev": {
-       "safe_authenticator": {
-         "filename": "safe_authenticator-mock"
-       }
-     },
-     "test": {
-       "system_uri": {
-         "targetDir": "src/ffi"
-       },
-       "safe_authenticator": {
-         "filename": "safe_authenticator-mock",
-         "targetDir": "src/ffi"
-       }
-     },
-     "win32": {
-       "libwinpthread-1": {
-         "mirror": "https://s3.eu-west-2.amazonaws.com/libwinpthread",
-         "version": "v0.1.0",
-         "targetDir": "dist",
-         "filePattern": "^libwinpthread-1.dll$"
-       },
-       "ENV": {
-         "test": {
-           "libwinpthread-1": {
-             "targetDir": "src/ffi"
-           }
-         }
-       }
-     }
-    }
+    "react-icons": "^2.2.3"
   }
+
 }
