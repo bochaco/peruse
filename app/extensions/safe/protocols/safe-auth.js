@@ -7,6 +7,7 @@ import { CONFIG, PROTOCOLS } from 'constants';
 import { session, app } from 'electron';
 /* eslint-enable import/extensions */
 import sysUri from '../ffi/sys_uri';
+import lib from '../ffi/lib';
 
 const isDevMode = process.execPath.match( /[\\/]electron/ );
 
@@ -24,12 +25,11 @@ if ( isDevMode && process.platform === 'darwin' )
     appInfo.bundle = 'com.github.electron';
 }
 
-const registerSafeAuthProtocol = () =>
+export const registerSafeAuthProtocol = () =>
 {
     logger.info('Register safe-auth scheme');
     const partition = CONFIG.SAFE_PARTITION;
     const ses = session.fromPartition( partition );
-
 
     sysUri.registerUriScheme( appInfo, PROTOCOLS.SAFE_AUTH );
     //TODO this should just be handles as routes on browser server...
@@ -67,7 +67,18 @@ const registerSafeAuthProtocol = () =>
     } );
 };
 
-export default registerSafeAuthProtocol;
+// export registerSafeAuthProtocol;
+
+
+export const setupAuthFFI = (libPath) => lib.load(libPath).catch((err) => logger.error(err));
+/* eslint-enable import/prefer-default-export */
+
+
+        // load ffi library
+    // api.ffi.ffiLoader.loadLibrary()
+      // TODO notify on browser
+
+// }
 // //
 // const scheme = {
 //     scheme        : PROTOCOLS.SAFE_AUTH,
