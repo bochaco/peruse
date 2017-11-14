@@ -20,7 +20,7 @@ import configureStore from './store/configureStore';
 import handleCommands from './commandHandling';
 
 // TODO: This should be handled in an extensible fashion
-import { handleIPCResponse } from './extensions/safe/network';
+import { handleOpenUrl } from './extensions/safe/network';
 
 const initialState = {};
 
@@ -93,7 +93,7 @@ const shouldQuit = app.makeSingleInstance( ( commandLine ) =>
     {
         // sendResponse( commandLine[1] );
 
-        handleIPCResponse( parseSafeUri( commandLine[1] ) );
+        handleOpenUrl( parseSafeUri( commandLine[1] ) );
 
     }
 
@@ -120,7 +120,7 @@ app.on( 'ready', async () =>
         if ( process.argv.length >= 2 && uriArg && ( uriArg.indexOf( 'safe' ) === 0 ) )
         {
             logger.info( 'received safe uriii', uriArg );
-            handleIPCResponse( parseSafeUri( uriArg ) );
+            handleOpenUrl( parseSafeUri( uriArg ) );
         }
     }
 
@@ -139,5 +139,5 @@ app.on( 'open-url', ( e, url ) =>
 {
     // TODO. Queue incase of not started.
     // Also parse out and deal with safe:// urls and auth response etc.
-    handleIPCResponse( parseSafeUri(url) );
+    handleOpenUrl( parseSafeUri(url) );
 } );

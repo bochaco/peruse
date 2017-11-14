@@ -1,7 +1,11 @@
 import { initializeApp, fromAuthURI } from '@maidsafe/safe-node-app';
-import { APP_INFO, CONFIG, SAFE } from 'constants';
+import { APP_INFO, CONFIG, SAFE, PROTOCOLS } from 'constants';
 import logger from 'logger';
+import { parse as parseURL } from 'url';
 import { app } from 'electron';
+
+// TODO tidy separation of auth etc here.
+import { authenticator } from './ffi/authenticator';
 
 import { openExternal } from './api/utils';
 
@@ -9,19 +13,19 @@ let appObj = null;
 const queue = [];
 
 
-export const authFromQueue = async() =>
+export const authFromQueue = async () =>
 {
-    if( queue.length )
+    if ( queue.length )
     {
-        authFromRes( queue[0] ); //hack for testing
+        authFromRes( queue[0] ); // hack for testing
     }
-}
+};
 
 
-const authFromRes = async( res ) =>
+const authFromRes = async ( res ) =>
 {
     appObj = await appObj.auth.loginFromURI( res );
-}
+};
 
 // ipcRenderer.on( 'simulate-mock-res', () =>
 // {
@@ -48,11 +52,40 @@ const getMDataValueForKey = async ( md, key ) =>
 export const getAppObj = () =>
     appObj;
 
-export const handleIPCResponse = async ( res ) =>
+
+export const handleSafeAuthAuthentication = ( req, type ) =>
 {
+    // ipcRenderer.send( 'decryptRequest', req, type || CLIENT_TYPES.DESKTOP );
+
+    authenticator.decodeRequest( req, type || CLIENT_TYPES.DESKTOP )
+    // clearAutocomplete();
+    // FIXME change to constant instand of -1
+    // if (safeAuthNetworkState === -1) {
+    //   onClickOpenSafeAuthHome()
+    // }
+};
+
+
+export const handleOpenUrl = async ( res ) =>
+{
+    let authUrl = null;
+    logger.info( 'Received URL response: ', res );
+
+    if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
+    {
+        authUrl = parseSafeAuthUrl( res );
+
+        if ( authUrl.action === 'auth' )
+        {
+            handleSafeAuthAuthentication( authUrl );
+        }
+    }
+    // TODO: Open URL proper. IF AUTH. We send req to handle in auth
+    // handleSafeAuthAuthentication(url);
+
+    // IF NOT + is safe, we handle that.
     try
     {
-        logger.info( 'Received URL response: ', res );
 
         if ( appObj )
         {
@@ -82,6 +115,36 @@ export const handleIPCResponse = async ( res ) =>
     // }
 };
 
+
+export function parseSafeAuthUrl( url, isClient )
+{
+    const safeAuthUrl = {};
+    const parsedUrl = parseURL( url );
+
+    if ( !( /^(\/\/)*(bundle.js|home|bundle.js.map)(\/)*$/.test( parsedUrl.hostname ) ) )
+    {
+        return { action: 'auth' };
+    }
+
+    safeAuthUrl.protocol = parsedUrl.protocol;
+    safeAuthUrl.action = parsedUrl.hostname;
+
+    const data = parsedUrl.pathname ? parsedUrl.pathname.split( '/' ) : null;
+    if ( !isClient && !!data )
+    {
+        safeAuthUrl.appId = data[1];
+        safeAuthUrl.payload = data[2];
+    }
+    else
+    {
+        safeAuthUrl.appId = parsedUrl.protocol.split( '-' ).slice( -1 )[0];
+        safeAuthUrl.payload = null;
+    }
+    safeAuthUrl.search = parsedUrl.search;
+    return safeAuthUrl;
+}
+
+
 export const initAnon = async () =>
 {
     logger.verbose( 'Initialising unauthed app: ', APP_INFO.info );
@@ -96,7 +159,22 @@ export const initAnon = async () =>
         logger.info( 'auth req generated:', authReq );
         // commented out until system_uri open issue is solved for osx
         // await appObj.auth.openUri(resp.uri);
-        openExternal( authReq.uri );
+        // openExternal( authReq.uri );
+
+        //
+        // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
+        // {
+            const authUrl = parseSafeAuthUrl( authReq );
+
+            if ( authUrl.action === 'auth' )
+            {
+                handleSafeAuthAuthentication( authUrl );
+            }
+        // }
+
+        // TODO: instead of opening authURI, lets pass direct to function of extension.
+        // DO WE EVEN NEED TO GEN?
+
         return appObj;
     }
     catch ( e )
@@ -264,7 +342,7 @@ export const reconnect = ( app ) =>
  */
 export const initMock = async () =>
 {
-    logger.info('initing mock')
+    logger.info( 'initing mock' );
     try
     {
         appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH } );
