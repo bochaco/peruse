@@ -7,7 +7,7 @@ import { app } from 'electron';
 // TODO tidy separation of auth etc here.
 import { authenticator } from './ffi/authenticator';
 
-import { openExternal } from './api/utils';
+// import { openExternal } from './api/utils';
 
 let appObj = null;
 const queue = [];
@@ -57,7 +57,7 @@ export const handleSafeAuthAuthentication = ( req, type ) =>
 {
     // ipcRenderer.send( 'decryptRequest', req, type || CLIENT_TYPES.DESKTOP );
 
-    authenticator.decodeRequest( req, type || CLIENT_TYPES.DESKTOP )
+    authenticator.decodeRequest( req.uri, type || CLIENT_TYPES.DESKTOP )
     // clearAutocomplete();
     // FIXME change to constant instand of -1
     // if (safeAuthNetworkState === -1) {
@@ -159,7 +159,7 @@ export const initAnon = async () =>
         logger.info( 'auth req generated:', authReq );
         // commented out until system_uri open issue is solved for osx
         // await appObj.auth.openUri(resp.uri);
-        // openExternal( authReq.uri );
+        openExternal( authReq.uri );
 
         //
         // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
@@ -211,7 +211,7 @@ export const requestAuth = async () =>
         const resp = await app.auth.genAuthUri( APP_INFO.permissions, APP_INFO.opts );
         // commented out until system_uri open issue is solved for osx
         // await app.auth.openUri(resp.uri);
-        openExternal( resp.uri );
+        // openExternal( resp.uri );
         return;
     }
     catch ( err )
@@ -268,7 +268,7 @@ export const requestSharedMDAuth = async ( app, publicName ) =>
         const resp = await app.auth.genShareMDataUri( mdPermissions );
         // commented out until system_uri open issue is solved for osx
         // await app.auth.openUri(resp.uri);
-        openExternal( resp.uri );
+        // openExternal( resp.uri );
         return;
     }
     catch ( err )
