@@ -119,7 +119,7 @@ app.on( 'ready', async () =>
         const uriArg = process.argv[process.argv.length - 1];
         if ( process.argv.length >= 2 && uriArg && ( uriArg.indexOf( 'safe' ) === 0 ) )
         {
-            logger.info( 'redceived safe uriii', uriArg );
+            logger.info( 'received safe uriii', uriArg );
             handleIPCResponse( parseSafeUri( uriArg ) );
         }
     }
@@ -137,7 +137,7 @@ app.on( 'ready', async () =>
 
 app.on( 'open-url', ( e, url ) =>
 {
-    logger.info('opening urlllll', url)
+    // logger.info('opening urlllll', url)
     // TODO. Queue incase of not started.
     // Also parse out and deal with safe:// urls and auth response etc.
     handleIPCResponse( parseSafeUri(url) );
