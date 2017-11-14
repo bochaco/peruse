@@ -30,6 +30,7 @@ else
 
 export const PROTOCOLS = {
     SAFE       : 'safe',
+    SAFE_AUTH  : 'safe-auth',
     SAFE_LOCAL : 'localhost',
     SAFE_LOGS  : 'safe-logs'
 };

@@ -43,7 +43,7 @@ const initSafeBrowsing = ( store ) =>
 
     startServer(store);
     registerSafeProtocol();
-    // registerSafeAuthProtocol();
+    registerSafeAuthProtocol();
     blockNonSAFERequests();
 
     // if we want to do something with the store, we would do it here.
