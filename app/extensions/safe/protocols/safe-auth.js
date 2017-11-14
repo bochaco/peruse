@@ -2,9 +2,9 @@ import path from 'path';
 import fs from 'fs';
 import url from 'url';
 import logger from 'logger';
-import { PROTOCOLS } from 'constants';
+import { CONFIG, PROTOCOLS } from 'constants';
 /* eslint-disable import/extensions */
-import { protocol, app } from 'electron';
+import { session, app } from 'electron';
 /* eslint-enable import/extensions */
 import sysUri from '../ffi/sys_uri';
 
@@ -27,10 +27,13 @@ if ( isDevMode && process.platform === 'darwin' )
 const registerSafeAuthProtocol = () =>
 {
     logger.info('Register safe-auth scheme');
+    const partition = CONFIG.SAFE_PARTITION;
+    const ses = session.fromPartition( partition );
+
 
     sysUri.registerUriScheme( appInfo, PROTOCOLS.SAFE_AUTH );
     //TODO this should just be handles as routes on browser server...
-    protocol.registerBufferProtocol( PROTOCOLS.SAFE_AUTH, ( req, cb ) =>
+    ses.protocol.registerBufferProtocol( PROTOCOLS.SAFE_AUTH, ( req, cb ) =>
     {
         const parsedUrl = url.parse( req.url );
         switch ( parsedUrl.pathname )
@@ -60,7 +63,7 @@ const registerSafeAuthProtocol = () =>
         }
     }, ( err ) =>
     {
-        if ( err ) console.error( 'Failed to register protocol' );
+        logger.error( 'Problem register safe-auth', err )
     } );
 };
 

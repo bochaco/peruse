@@ -34,7 +34,7 @@ import { mainSync } from './store/electronStoreSyncer';
 const mainWindow = null;
 mainSync( store );
 
-protocol.registerStandardSchemes(['safe']);
+protocol.registerStandardSchemes(['safe', 'safe-auth']);
 
 if ( isRunningPackaged )
 {

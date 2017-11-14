@@ -16,6 +16,8 @@ import MdStarOutline from 'react-icons/lib/md/star-outline';
 
 import styles from './addressBar.css';
 
+const log = require('electron-log');
+
 /**
  * Takes input and adds requisite url portions as needed, comparing to package.json defined
  * protocols, or defaulting to http
@@ -29,35 +31,34 @@ const makeValidUrl = ( input )=>
     const parser = document.createElement( 'a' );
     parser.href = input;
 
-    const inputProtocol = parser.protocol;
-    const inputHost = parser.host;
+    const inputProtocol =  parser.protocol.replace( ':', '' );
+    const inputHost = parser.hostname;
 
     let finalProtocol;
     let finalHost;
-    let everythingAfterHost = '';
+    let everythingAfterProtocol = '';
 
-    if ( inputHost )
+    if ( validProtocols.includes( inputProtocol ) )
     {
-        finalHost = inputHost.includes( '.' ) ? inputHost : `${inputHost}.com`;
-        everythingAfterHost = input.substring(
-            input.indexOf( inputHost ) + inputHost.length,
+        log.info('this protocol exists', inputProtocol)
+        finalProtocol = inputProtocol;
+
+
+        //TODO: Refactor this and no magix numbers
+        let protocolPos = input.indexOf( '://' ) > -1 ? input.indexOf( '://' ) + 3  :  input.indexOf( ':' );
+
+
+        everythingAfterProtocol = input.substring(
+            protocolPos,
             input.length );
     }
     else
     {
-        finalHost = input;
-    }
-
-    if ( validProtocols.includes( inputProtocol ) )
-    {
-        finalProtocol = inputProtocol;
-    }
-    else
-    {
         finalProtocol = validProtocols[0];
+        everythingAfterProtocol = input;
     }
 
-    const endUrl = `${finalProtocol}://${finalHost}/${everythingAfterHost}`
+    const endUrl = `${finalProtocol}://${everythingAfterProtocol}`
 
     return removeTrailingSlash( endUrl );
 }
