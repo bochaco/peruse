@@ -6,6 +6,7 @@ import authenticator from './authenticator';
 import CONSTANTS from '../constants';
 import config from '../config';
 import logger from 'logger';
+import {handleAnonConnResponse} from '../network';
 
 config.i18n();
 
@@ -20,12 +21,16 @@ const parseResUrl = ( url ) =>
 
 const openExternal = ( uri ) =>
 {
+    //should be if internal exclusion or something more sensible here.
+    logger.info('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>trying to open external', uri)
+    handleAnonConnResponse(uri);
     if ( !uri || ( uri.indexOf( 'safe' ) !== 0 ) || reqQ.req.type !== CONSTANTS.CLIENT_TYPES.DESKTOP )
     {
         return;
     }
     try
     {
+
         shell.openExternal( parseResUrl( uri ) );
     }
     catch ( err )

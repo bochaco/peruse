@@ -67,7 +67,7 @@ export const handleSafeAuthAuthentication = ( uri, type ) =>
     // ipcRenderer.send( 'decryptRequest', uri, type || CLIENT_TYPES.DESKTOP );
 
     //ull as in not IPC event here.
-    let script = decryptViaRenderer( uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
+    // let script = decryptViaRenderer( uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
 
     // logger.info('our scriptttt', script, uri.toString() );
     callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
@@ -107,6 +107,7 @@ export const initAnon = async () =>
         // TODO: register scheme. Use genConnUri not genAuth
         appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, logger } );
 
+        //genConnUri
         const authReq = await appObj.auth.genConnUri( {} );
 
         logger.info( 'auth req generated:', authReq );
@@ -115,13 +116,13 @@ export const initAnon = async () =>
         // openExternal( authReq.uri );
 
         //
-        // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
+        // if ( parseURL( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
         // {
             const authType = parseSafeAuthUrl( authReq.uri );
 
             if ( authType.action === 'auth' )
             {
-                handleSafeAuthAuthentication( authReq );
+                handleSafeAuthAuthentication( authReq.uri );
             }
         // }
 
@@ -138,6 +139,11 @@ export const initAnon = async () =>
 };
 
 
+export const handleAnonConnResponse = ( url ) =>
+{
+    logger.info('handling this thinggggggggggggggggggggg', url)
+    handleOpenUrl( url );
+}
 
 
 
@@ -146,15 +152,19 @@ export const handleOpenUrl = async ( res ) =>
     let authUrl = null;
     logger.info( 'Received URL response: ', res );
 
-    if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
+    if ( parseURL( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
     {
         authUrl = parseSafeAuthUrl( res );
 
         if ( authUrl.action === 'auth' )
         {
-            handleSafeAuthAuthentication( authUrl );
+            return handleSafeAuthAuthentication( authUrl );
         }
     }
+
+
+
+    logger.info( 'still handling uriii')
     // TODO: Open URL proper. IF AUTH. We send req to handle in auth
     // handleSafeAuthAuthentication(url);
 
