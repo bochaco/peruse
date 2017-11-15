@@ -3,6 +3,7 @@ import { APP_INFO, CONFIG, SAFE, PROTOCOLS } from 'constants';
 import logger from 'logger';
 import { parse as parseURL } from 'url';
 import { app } from 'electron';
+import {executeScriptInBackground} from 'utils/background-process';
 
 // TODO tidy separation of auth etc here.
 import { callIPC } from './ffi/ipc';
@@ -64,15 +65,75 @@ export const getAppObj = () =>
 export const handleSafeAuthAuthentication = ( uri, type ) =>
 {
     // ipcRenderer.send( 'decryptRequest', uri, type || CLIENT_TYPES.DESKTOP );
+    // callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
 
     //ull as in not IPC event here.
-    callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
+    let script = decryptViaRenderer( uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
+
+    executeScriptInBackground( script, ( res ) =>
+    {
+        logger.info('the response from the thingggggggggggg is here');
+    })
+    // .catch( e => logger.error );
     // clearAutocomplete();
     // FIXME change to constant instand of -1
     // if (safeAuthNetworkState === -1) {
     //   onClickOpenSafeAuthHome()
     // }
 };
+
+
+
+// TODO. This is a simulation of render process comms. Keeps it clean to one implementation.
+// The actual auth handling should also occur off process.
+let decryptViaRenderer = (req, type) => (`
+    import { ipcRenderer } from 'electron';
+
+    ipcRenderer.send('decryptRequest', ${req}, ${type});
+`)
+
+
+export const initAnon = async () =>
+{
+    logger.verbose( 'Initialising unauthed app: ', APP_INFO.info );
+
+    try
+    {
+        // TODO: register scheme. Use genConnUri not genAuth
+        appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, logger } );
+
+        const authReq = await appObj.auth.genConnUri( {} );
+
+        logger.info( 'auth req generated:', authReq );
+        // commented out until system_uri open issue is solved for osx
+        // await appObj.auth.openUri(resp.uri);
+        // openExternal( authReq.uri );
+
+        //
+        // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
+        // {
+            const authType = parseSafeAuthUrl( authReq.uri );
+
+            if ( authType.action === 'auth' )
+            {
+                handleSafeAuthAuthentication( authReq );
+            }
+        // }
+
+        // TODO: instead of opening authURI, lets pass direct to function of extension.
+        // DO WE EVEN NEED TO GEN?
+
+        return appObj;
+    }
+    catch ( e )
+    {
+        logger.error( e );
+        throw e;
+    }
+};
+
+
+
 
 
 export const handleOpenUrl = async ( res ) =>
@@ -125,6 +186,7 @@ export const handleOpenUrl = async ( res ) =>
 };
 
 
+
 export function parseSafeAuthUrl( url, isClient )
 {
     if( typeof url !== 'string' )
@@ -158,45 +220,6 @@ export function parseSafeAuthUrl( url, isClient )
     return safeAuthUrl;
 }
 
-
-export const initAnon = async () =>
-{
-    logger.verbose( 'Initialising unauthed app: ', APP_INFO.info );
-
-    try
-    {
-        // TODO: register scheme. Use genConnUri not genAuth
-        appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, logger } );
-
-        const authReq = await appObj.auth.genConnUri( {} );
-
-        logger.info( 'auth req generated:', authReq );
-        // commented out until system_uri open issue is solved for osx
-        // await appObj.auth.openUri(resp.uri);
-        // openExternal( authReq.uri );
-
-        //
-        // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
-        // {
-            const authType = parseSafeAuthUrl( authReq.uri );
-
-            if ( authType.action === 'auth' )
-            {
-                handleSafeAuthAuthentication( authReq );
-            }
-        // }
-
-        // TODO: instead of opening authURI, lets pass direct to function of extension.
-        // DO WE EVEN NEED TO GEN?
-
-        return appObj;
-    }
-    catch ( e )
-    {
-        logger.error( e );
-        throw e;
-    }
-};
 
 export const fetchData = async ( app, url ) =>
 {
