@@ -7,6 +7,8 @@ import { app } from 'electron';
 // TODO tidy separation of auth etc here.
 import { callIPC } from './ffi/ipc';
 
+// TODO sort out constants locations
+import AUTH_CONSTANTS from './constants';
 // import { openExternal } from './api/utils';
 
 
@@ -59,12 +61,12 @@ export const getAppObj = () =>
     appObj;
 
 
-export const handleSafeAuthAuthentication = ( req, type ) =>
+export const handleSafeAuthAuthentication = ( uri, type ) =>
 {
-    // ipcRenderer.send( 'decryptRequest', req, type || CLIENT_TYPES.DESKTOP );
+    // ipcRenderer.send( 'decryptRequest', uri, type || CLIENT_TYPES.DESKTOP );
 
     //ull as in not IPC event here.
-    callIPC.decryptRequest( null, req.uri, type || CLIENT_TYPES.DESKTOP )
+    callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
     // clearAutocomplete();
     // FIXME change to constant instand of -1
     // if (safeAuthNetworkState === -1) {
@@ -125,6 +127,11 @@ export const handleOpenUrl = async ( res ) =>
 
 export function parseSafeAuthUrl( url, isClient )
 {
+    if( typeof url !== 'string' )
+    {
+        throw new Error('URl should be a string to parse')
+    }
+
     const safeAuthUrl = {};
     const parsedUrl = parseURL( url );
 
@@ -161,7 +168,7 @@ export const initAnon = async () =>
         // TODO: register scheme. Use genConnUri not genAuth
         appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, logger } );
 
-        const authReq = await appObj.auth.genAuthUri( {} );
+        const authReq = await appObj.auth.genConnUri( {} );
 
         logger.info( 'auth req generated:', authReq );
         // commented out until system_uri open issue is solved for osx
@@ -171,11 +178,11 @@ export const initAnon = async () =>
         //
         // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
         // {
-            const authUrl = parseSafeAuthUrl( authReq );
+            const authType = parseSafeAuthUrl( authReq.uri );
 
-            if ( authUrl.action === 'auth' )
+            if ( authType.action === 'auth' )
             {
-                handleSafeAuthAuthentication( authUrl );
+                handleSafeAuthAuthentication( authReq );
             }
         // }
 

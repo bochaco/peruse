@@ -129,7 +129,7 @@ const registerNetworkListener = ( e ) =>
 
 const decodeRequest = ( e, req, type ) =>
 {
-    logger.info( 'decoding req' );
+    logger.info( 'decoding req', req, type );
     const isWebReq = ( type === CONSTANTS.CLIENT_TYPES.WEB );
     const isUnRegistered = req.isUnRegistered;
     const request = new Request( {

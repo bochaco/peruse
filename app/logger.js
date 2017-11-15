@@ -36,8 +36,14 @@ log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
 
 process.on('uncaughtException', (err) => {
-  log.error('whoops! there was an error');
+  log.error('whoops! there was an uncaught error');
   log.error(err);
+  log.error(err.file);
+  log.error(err.line);
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  log.error('Unhandled Rejection at:', p, 'reason:', reason);
 });
 
 export default log;

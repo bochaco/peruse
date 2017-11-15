@@ -18,7 +18,6 @@ import * as typeParser from './refs/parsers';
 import * as typeConstructor from './refs/constructors';
 import CONSTANTS from '../constants';
 import logger from 'logger';
-
 // private variables
 const _registeredClientHandle = Symbol( 'registeredClientHandle' );
 const _nwState = Symbol( 'nwState' );
@@ -334,6 +333,8 @@ class Authenticator extends SafeLib
 
             if ( !this.registeredClientHandle )
             {
+                logger.verbose('decoding unregisterd request')
+
                 return this._decodeUnRegisteredRequest( parsedURI, resolve, reject );
             }
             const decodeReqAuthCb = this._pushCb( ffi.Callback( types.Void,
@@ -442,6 +443,9 @@ class Authenticator extends SafeLib
                     }
                     this[_reqErrListener].broadcast( JSON.stringify( result ) );
                 } ) );
+
+                logger.verbose('ALL CBS PREPPED unregisterd request')
+
             try
             {
                 this.safeLib.auth_decode_ipc_msg(
