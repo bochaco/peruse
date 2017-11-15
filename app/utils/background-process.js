@@ -55,8 +55,13 @@ const runScript = async ( win, debug, script, cb ) =>
         logger.error('wbcontents doesnt exist yet')
         return;
     }
+    if( debug )
+    {
+        win.webContents.openDevTools()
+    }
     const res = win.webContents.executeJavaScript( script, ( err, url, result ) =>
     {
+        logger.info('resullltttssss??????????', result)
         cb( err, url, result );
         if ( !debug )
         {
@@ -69,9 +74,10 @@ const runScript = async ( win, debug, script, cb ) =>
                 }
             }, 2 * 60 * 1000 ); // 2 min
         }
+
     } )
 
-    return res;
+    return res.then( r => logger.info('process worked')).catch( e => logger.error('did not worrkrkkkkkkk') );
     logger.info('the bg script was passed', res);
 };
 
@@ -82,7 +88,7 @@ const runScript = async ( win, debug, script, cb ) =>
  * @param cb{function} - function that we want to call when script is done
  * @param debug{boolean} - would you like to keep browser window when script is done
  */
-export const executeScriptInBackground = ( script, cb, debug = false ) =>
+export const executeScriptInBackground = ( script, cb, debug = true ) =>
 {
     if ( backgroundProcessTimer )
     {
@@ -94,7 +100,7 @@ export const executeScriptInBackground = ( script, cb, debug = false ) =>
         backgroundProcess = new BrowserWindow( {
             show           : debug,
             webPreferences : {
-                partition : 'default' // TODO make safe
+                // partition : 'default' // TODO make safe
             }
         } );
 

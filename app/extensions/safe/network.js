@@ -65,15 +65,17 @@ export const getAppObj = () =>
 export const handleSafeAuthAuthentication = ( uri, type ) =>
 {
     // ipcRenderer.send( 'decryptRequest', uri, type || CLIENT_TYPES.DESKTOP );
-    // callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
 
     //ull as in not IPC event here.
     let script = decryptViaRenderer( uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
 
-    executeScriptInBackground( script, ( res ) =>
-    {
-        logger.info('the response from the thingggggggggggg is here');
-    })
+    // logger.info('our scriptttt', script, uri.toString() );
+    callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
+
+    // executeScriptInBackground( script, ( res ) =>
+    // {
+    //     logger.info('the response from the thingggggggggggg is here');
+    // })
     // .catch( e => logger.error );
     // clearAutocomplete();
     // FIXME change to constant instand of -1
@@ -87,9 +89,12 @@ export const handleSafeAuthAuthentication = ( uri, type ) =>
 // TODO. This is a simulation of render process comms. Keeps it clean to one implementation.
 // The actual auth handling should also occur off process.
 let decryptViaRenderer = (req, type) => (`
-    import { ipcRenderer } from 'electron';
+    (function() {
+        const ipcRenderer = require('electron').ipcRenderer;
+        ipcRenderer.send('decryptRequest', ${req}, ${type} );
+        return 'hithere';
 
-    ipcRenderer.send('decryptRequest', ${req}, ${type});
+      })()
 `)
 
 

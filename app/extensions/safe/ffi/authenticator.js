@@ -839,6 +839,8 @@ class Authenticator extends SafeLib
 
     _decodeUnRegisteredRequest( parsedUri, resolve, reject )
     {
+        logger.info('in here nowww', parsedUri );
+
         if ( !parsedUri )
         {
             return reject( new Error( 'Invalid URI' ) );
@@ -846,11 +848,15 @@ class Authenticator extends SafeLib
 
         const unregisteredCb = this._getUnregisteredClientCb( resolve, reject );
 
+        logger.info('in here nowww blooowwww' );
+
         const decodeReqErrorCb = this._pushCb( ffi.Callback( types.Void,
             [types.voidPointer, types.FfiResult, types.CString], () =>
             {
                 reject( new Error( 'Unauthorised' ) );
             } ) );
+
+            logger.info('in here nowww blooowwww222222' );
 
         try
         {

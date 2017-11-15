@@ -104,9 +104,14 @@ class ReqQueue
             self.next();
         } ).catch( ( err ) =>
         {
+            logger.error('here is an error', err)
             // FIXME: if error occurs for unregistered client process next
             self.req.error = err.message;
-            ipcEvent.sender.send( self.errChannelName, self.req );
+
+            if ( ipcEvent )
+            {
+                ipcEvent.sender.send( self.errChannelName, self.req );
+            }
         } );
     }
 }
@@ -129,7 +134,7 @@ const registerNetworkListener = ( e ) =>
 
 const decodeRequest = ( e, req, type ) =>
 {
-    logger.info( 'decoding req', req, type );
+    logger.info( '>>>>>>>>>>>>>>>>>>>>>>decoding req', req, type );
     const isWebReq = ( type === CONSTANTS.CLIENT_TYPES.WEB );
     const isUnRegistered = req.isUnRegistered;
     const request = new Request( {
