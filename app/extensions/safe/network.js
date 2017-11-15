@@ -9,6 +9,12 @@ import { authenticator } from './ffi/authenticator';
 
 // import { openExternal } from './api/utils';
 
+
+// NEXT STEPS
+// 1. Get auth class and client in api folder.
+// 2. ~Set that up!! via constructor
+// 3. Then the decodeRequest function should add to list for parsing etc.
+// 4. Which should do _smoething_ which we can pass back. First as URI then as whateverrrr
 let appObj = null;
 const queue = [];
 

@@ -67,10 +67,10 @@ export const registerSafeAuthProtocol = () =>
     } );
 };
 
-// export registerSafeAuthProtocol;
+export default registerSafeAuthProtocol;
 
 
-export const setupAuthFFI = (libPath) => lib.load(libPath).catch((err) => logger.error(err));
+// export const setupAuthFFI = (libPath) => lib.load(libPath).catch((err) => logger.error(err));
 /* eslint-enable import/prefer-default-export */
 
 

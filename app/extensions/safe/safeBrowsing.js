@@ -5,7 +5,9 @@ import { CONFIG } from 'constants';
 import startServer from './server';
 
 import registerSafeProtocol from './protocols/safe';
-import { setupAuthFFI, registerSafeAuthProtocol} from './protocols/safe-auth';
+import registerSafeAuthProtocol from './protocols/safe-auth';
+
+import * as authAPI from './api';
 
 const isForSafeServer = ( parsedUrlObject ) =>
 {
@@ -39,11 +41,15 @@ const blockNonSAFERequests = () =>
 
 const initSafeBrowsing = ( store ) =>
 {
-    logger.info( 'Registering SAFE Network Protocols' );
+    logger.info( 'Registering SAFE Network Protocols', authAPI );
 
     startServer(store);
     registerSafeProtocol();
-    setupAuthFFI();
+
+
+    // setup auth
+    authAPI.ffi.ffiLoader.loadLibrary();
+    // authAPI.client();
     registerSafeAuthProtocol();
     blockNonSAFERequests();
 
