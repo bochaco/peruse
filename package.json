@@ -36,6 +36,7 @@
     "package-linux": "yarn run build && build --linux",
     "package-all": "yarn run build && build -mwl",
     "cleanup": "mop -v",
+    "put-live-net-files-for-dev" : "cp ./resources/crust.config resources/crust.config node_modules/electron/dist/Electron.app/Contents/MacOS/Electron.crust.config && cp resources/log.toml node_modules/electron/dist/Electron.app/Contents/Resources/log.toml",
     "rebuild": "npm rebuild --runtime=electron --target=1.7.8 --disturl=https://atom.io/download/atom-shell --build-from-source && cd app && yarn rebuild --target=1.7.8"
   },
   "browserslist": "electron 1.4",
@@ -44,6 +45,17 @@
     "asarUnpack": [
       "**/@maidsafe/**/*",
       "**/weak/**/*"
+    ],
+    "extraResources": [
+      "app/node_modules/locales",
+      {
+        "from": "resources/log.toml",
+        "to": "log.toml"
+      },
+      {
+        "from": "resources/crust.config",
+        "to": "${productName}.crust.config"
+      }
     ],
     "files": [
       "dist/",
@@ -57,8 +69,7 @@
       "name": "SAFE",
       "schemes": [
         "safe",
-        "safe-auth",
-        "safe-bmV0Lm1haWRzYWZlLnBlcnVzZS1icm93c2Vy"
+        "safe-auth"
       ]
     },
     "win": {

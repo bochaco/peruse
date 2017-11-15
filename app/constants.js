@@ -7,6 +7,7 @@ import pkg from 'appPackage';
 // TODO: We can't import logger direct here due to webpack??? (alias from another alias???). Find out why not...
 const log = require( 'electron-log' );
 
+console.log('EXEC PATHHHHHHHHHHHHHHHHH', process.execPath)
 
 export const isRunningUnpacked = process.execPath.match( /[\\/]electron/ );
 export const isRunningPackaged = !isRunningUnpacked;
