@@ -5,7 +5,7 @@ import i18n from 'i18n';
 import authenticator from './authenticator';
 import CONSTANTS from '../constants';
 import config from '../config';
-
+import logger from 'logger';
 config.i18n();
 
 let ipcEvent = null;
@@ -238,3 +238,16 @@ const init = () => {
 };
 
 export default init;
+
+export const callIPC = {
+    registerSafeNetworkListener:  registerNetworkListener,
+    decryptRequest:  decodeRequest,
+    registerOnAuthReq:  onAuthReq,
+    registerOnContainerReq:  onContainerReq,
+    registerOnSharedMDataReq:  onSharedMDataReq,
+    registerAuthDecision:  onAuthDecision,
+    registerContainerDecision:  onContainerDecision,
+    registerSharedMDataDecision:  onSharedMDataDecision,
+    registerOnReqError:  onReqError,
+    skipAuthRequest:  skipAuthReq
+}

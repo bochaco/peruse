@@ -6,6 +6,7 @@ import startServer from './server';
 
 import registerSafeProtocol from './protocols/safe';
 import registerSafeAuthProtocol from './protocols/safe-auth';
+import ipc  from './ffi/ipc';
 
 import * as authAPI from './api';
 
@@ -41,7 +42,7 @@ const blockNonSAFERequests = () =>
 
 const initSafeBrowsing = ( store ) =>
 {
-    logger.info( 'Registering SAFE Network Protocols', authAPI );
+    logger.info( 'Registering SAFE Network Protocols' );
 
     startServer(store);
     registerSafeProtocol();
@@ -49,6 +50,9 @@ const initSafeBrowsing = ( store ) =>
 
     // setup auth
     authAPI.ffi.ffiLoader.loadLibrary();
+
+    //dont do this inside if auth ffi as circular dep
+    ipc();
     // authAPI.client();
     registerSafeAuthProtocol();
     blockNonSAFERequests();

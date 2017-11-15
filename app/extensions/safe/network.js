@@ -5,14 +5,14 @@ import { parse as parseURL } from 'url';
 import { app } from 'electron';
 
 // TODO tidy separation of auth etc here.
-import { authenticator } from './ffi/authenticator';
+import { callIPC } from './ffi/ipc';
 
 // import { openExternal } from './api/utils';
 
 
 // NEXT STEPS
-// 1. Get auth class and client in api folder.
-// 2. ~Set that up!! via constructor
+// 1. Get auth class and client in api folder. [DONE]
+// 2. ~Set that up!! via constructor [DONE]
 // 3. Then the decodeRequest function should add to list for parsing etc.
 // 4. Which should do _smoething_ which we can pass back. First as URI then as whateverrrr
 let appObj = null;
@@ -63,7 +63,8 @@ export const handleSafeAuthAuthentication = ( req, type ) =>
 {
     // ipcRenderer.send( 'decryptRequest', req, type || CLIENT_TYPES.DESKTOP );
 
-    authenticator.decodeRequest( req.uri, type || CLIENT_TYPES.DESKTOP )
+    //ull as in not IPC event here.
+    callIPC.decryptRequest( null, req.uri, type || CLIENT_TYPES.DESKTOP )
     // clearAutocomplete();
     // FIXME change to constant instand of -1
     // if (safeAuthNetworkState === -1) {
@@ -165,7 +166,7 @@ export const initAnon = async () =>
         logger.info( 'auth req generated:', authReq );
         // commented out until system_uri open issue is solved for osx
         // await appObj.auth.openUri(resp.uri);
-        openExternal( authReq.uri );
+        // openExternal( authReq.uri );
 
         //
         // if ( parseUrl( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
