@@ -76,24 +76,32 @@ server.route( {
 
 export const startServer = async ( ) =>
 {
-    // can run prod in dev...?
-    if ( isRunningProduction )
-    {
-        appObj = await initAnon();
-    }
-    else
-    {
-        appObj = await initMock();
-    }
+    try{
 
-    server.start( ( err ) =>
-    {
-        if ( err )
+        // can run prod in dev...?
+        if ( isRunningProduction )
         {
-            throw err;
+            appObj = await initAnon();
         }
-        logger.info( `HAPI Server running at: ${server.info.uri}` );
-    } );
+        else
+        {
+            appObj = await initMock();
+        }
+
+        server.start( ( err ) =>
+        {
+            if ( err )
+            {
+                throw err;
+            }
+            logger.info( `HAPI Server running at: ${server.info.uri}` );
+        } );
+    }
+    catch( e )
+    {
+        logger.error('Problems starting internal server')
+        logger.error(e)
+    }
 };
 
 export default startServer;

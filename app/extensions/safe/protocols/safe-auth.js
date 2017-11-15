@@ -27,7 +27,7 @@ if ( isDevMode && process.platform === 'darwin' )
 
 export const registerSafeAuthProtocol = () =>
 {
-    logger.info('Register safe-auth scheme');
+    logger.info('Registering safe-auth scheme...');
     const partition = CONFIG.SAFE_PARTITION;
     const ses = session.fromPartition( partition );
 
@@ -63,7 +63,8 @@ export const registerSafeAuthProtocol = () =>
         }
     }, ( err ) =>
     {
-        logger.error( 'Problem register safe-auth', err )
+        if( err )
+            logger.error( 'Problem registering safe-auth', err )
     } );
 };
 
