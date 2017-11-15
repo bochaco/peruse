@@ -14,7 +14,7 @@ append = false
 file_timestamp = false
 
 [root]
-level = "trace"
+level = "error"
 appenders = ["async_console", "async_file"]
 
 [loggers."crust"]

@@ -62,8 +62,9 @@ const appInfo = {
         id     : pkg.identifier,
         scope  : null,
         name   : pkg.productName,
-        vendor : pkg.author.name
-        // ,
+        vendor : pkg.author.name,
+        // ,EXEC PATHHHHHHHHHHHHHHHHH /Users/josh/Projects/safe/forks/prod/peruse/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron
+        customSearchPath : isRunningUnpacked ? process.execPath : app.getPath( 'exe' )
         // customExecPath : isRunningUnpacked ? `${process.execPath} ${app.getAppPath()}` : app.getPath( 'exe' )
     },
     opt : {
