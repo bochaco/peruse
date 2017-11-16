@@ -133,6 +133,7 @@ export const initAnon = async () =>
     }
     catch ( e )
     {
+        logger.error( 'eeeeeeeeee.hereeeeeeeeeeee' );
         logger.error( e );
         throw e;
     }

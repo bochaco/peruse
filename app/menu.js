@@ -23,10 +23,10 @@ export default class MenuBuilder
 
     buildMenu()
     {
-        // if ( isRunningDevelopment )
-        // {
+        if ( isRunningDevelopment )
+        {
             this.setupDevelopmentEnvironment();
-        // }
+        }
 
         let template;
 
