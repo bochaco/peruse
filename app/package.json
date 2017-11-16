@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@maidsafe/safe-node-app": "0.4.1",
+    "@maidsafe/safe-node-app": "https://s3.eu-west-2.amazonaws.com/safe-app-nodejs/maidsafe-safe-node-app-0.4.1-1.tgz",
     "react-icons": "^2.2.3",
     "deps_downloader": "https://s3.eu-west-2.amazonaws.com/deps-downloader/deps_downloader-0.1.0.tgz",
     "enum": "2.5.0",
@@ -25,13 +25,13 @@
   "system_uri": {
     "mirror": "https://s3.eu-west-2.amazonaws.com/system-uri",
     "version": "v0.2.3",
-    "targetDir": "extensions/safe/dist",
+    "targetDir": "extensions/safe/net_dist",
     "filePattern": "^.*\\.(dll|so|dylib)$"
   },
   "safe_authenticator": {
     "mirror": "https://s3.eu-west-2.amazonaws.com/safe-client-libs",
-    "version": "v0.4.0",
-    "targetDir": "extensions/safe/dist",
+    "version": "8aa35d4",
+    "targetDir": "extensions/safe/net_dist",
     "filename": "safe_authenticator",
     "filePattern": "^.*\\.(dll|so|dylib)$",
     "force": true
@@ -55,7 +55,7 @@
       "libwinpthread-1": {
         "mirror": "https://s3.eu-west-2.amazonaws.com/libwinpthread",
         "version": "v0.1.0",
-        "targetDir": "extensions/safe/dist",
+        "targetDir": "extensions/safe/net_dist",
         "filePattern": "^libwinpthread-1.dll$"
       },
       "ENV": {

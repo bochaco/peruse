@@ -44,7 +44,8 @@
     "appId": "org.develar.PeruseBrowser",
     "asarUnpack": [
       "**/@maidsafe/**/*",
-      "**/weak/**/*"
+      "**/weak/**/*",
+      "extensions/safe/net_dist/**/*"
     ],
     "extraResources": [
       "app/node_modules/locales",
