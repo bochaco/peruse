@@ -1,6 +1,10 @@
 import Enum from 'enum';
 import path from 'path';
+import { isHot } from 'constants';
 
+
+// TODO. Resolve this in a cleaner fashion for unpacked/vs unpacked+testing/vs hot
+const libLocaleModifier = isHot ? '' : 'extensions/safe/';
 export default {
   NETWORK_STATUS: {
     CONNECTED: 0,
@@ -8,16 +12,16 @@ export default {
     DISCONNECTED: -1
   },
   LIB_PATH: {
-    PTHREAD: path.resolve( __dirname, 'dist/libwinpthread-1.dll'),
+    PTHREAD: path.resolve( __dirname, libLocaleModifier, `dist/libwinpthread-1.dll`),
     SAFE_AUTH: {
-      win32: path.resolve( __dirname, 'dist/safe_authenticator.dll'),
-      darwin: path.resolve( __dirname, 'dist/libsafe_authenticator.dylib'),
-      linux: path.resolve( __dirname, 'dist/libsafe_authenticator.so')
+      win32: path.resolve( __dirname, libLocaleModifier, `dist/safe_authenticator.dll`),
+      darwin: path.resolve( __dirname, libLocaleModifier, `dist/libsafe_authenticator.dylib`),
+      linux: path.resolve( __dirname, libLocaleModifier, `dist/libsafe_authenticator.so`)
     },
     SYSTEM_URI: {
-      win32: path.resolve( __dirname, 'dist/system_uri.dll'),
-      darwin: path.resolve( __dirname, 'dist/libsystem_uri.dylib'),
-      linux: path.resolve( __dirname, 'dist/libsystem_uri.so')
+      win32: path.resolve( __dirname, libLocaleModifier, `dist/system_uri.dll`),
+      darwin: path.resolve( __dirname, libLocaleModifier, `dist/libsystem_uri.dylib`),
+      linux: path.resolve( __dirname, libLocaleModifier, `dist/libsystem_uri.so`)
     }
   },
   LISTENER_TYPES: new Enum([
