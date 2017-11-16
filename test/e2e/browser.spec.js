@@ -18,6 +18,9 @@ const delay = time => new Promise( resolve => setTimeout( resolve, time ) );
 const app = new Application( {
     path : electron,
     args : [path.join( __dirname, '..', '..', 'app' )],
+  //   env: {
+  //       NODE_ENV: 'dev',
+  // }
 } );
 
 // TODO: Check that it loads a page from network/mock. Check that it loads images from said page.

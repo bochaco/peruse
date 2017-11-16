@@ -6,9 +6,9 @@ import startServer from './server';
 
 import registerSafeProtocol from './protocols/safe';
 import registerSafeAuthProtocol from './protocols/safe-auth';
-// import ipc  from './ffi/ipc';
+import ipc  from './ffi/ipc';
 
-// import * as authAPI from './api';
+import * as authAPI from './api';
 
 const isForSafeServer = ( parsedUrlObject ) =>
 {
@@ -47,12 +47,18 @@ const initSafeBrowsing = ( store ) =>
     startServer(store);
     registerSafeProtocol();
 
+    try{
 
-    // setup auth
-    // authAPI.ffi.ffiLoader.loadLibrary();
+        // setup auth
+        authAPI.ffi.ffiLoader.loadLibrary();
 
-    //dont do this inside if auth ffi as circular dep
-    // ipc();
+        //dont do this inside if auth ffi as circular dep
+        ipc();
+    }
+    catch(e){
+        logger.info('problemmssss')
+        logger.info(e)
+    }
     // authAPI.client();
     registerSafeAuthProtocol();
     blockNonSAFERequests();

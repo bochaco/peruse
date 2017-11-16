@@ -6,7 +6,7 @@ import { app } from 'electron';
 import {executeScriptInBackground} from 'utils/background-process';
 
 // TODO tidy separation of auth etc here.
-// import { callIPC } from './ffi/ipc';
+import { callIPC } from './ffi/ipc';
 
 // TODO sort out constants locations
 import AUTH_CONSTANTS from './constants';
@@ -70,7 +70,7 @@ export const handleSafeAuthAuthentication = ( uri, type ) =>
     // let script = decryptViaRenderer( uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
 
     // logger.info('our scriptttt', script, uri.toString() );
-    // callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
+    callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
 
     // executeScriptInBackground( script, ( res ) =>
     // {

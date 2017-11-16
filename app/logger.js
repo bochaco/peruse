@@ -1,6 +1,6 @@
 import {app} from 'electron';
 import util from 'util';
-import { env } from 'constants';
+import { env, isRunningUnpacked, isRunningPackaged, isRunningProduction, isRunningDevelopment } from 'constants';
 // error, warn, info, verbose, debug, silly
 
 //must be require?
@@ -30,10 +30,13 @@ log.transports.file.maxSize = 5 * 1024 * 1024;
 
 //TODO: add buld ID if prod. Incase you're opening up, NOT THIS BUILD.
 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-log.info( `      Started with node env: ${env}`);
+log.info( `      Started with node env: ${env} || ${process.env.NODE_ENV}`);
 log.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
-
+log.info( 'unpacked?', isRunningUnpacked)
+log.info( 'isRunningPackaged?', isRunningPackaged)
+log.info( 'isRunningProduction?', isRunningProduction)
+log.info( 'isRunningDevelopment?', isRunningDevelopment)
 
 process.on('uncaughtException', (err) => {
   log.error('whoops! there was an uncaught error');
