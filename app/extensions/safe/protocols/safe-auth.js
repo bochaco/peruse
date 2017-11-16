@@ -6,8 +6,8 @@ import { CONFIG, PROTOCOLS } from 'constants';
 /* eslint-disable import/extensions */
 import { session, app } from 'electron';
 /* eslint-enable import/extensions */
-import sysUri from '../ffi/sys_uri';
-import lib from '../ffi/lib';
+// import sysUri from '../ffi/sys_uri';
+// import lib from '../ffi/lib';
 
 const isDevMode = process.execPath.match( /[\\/]electron/ );
 
@@ -31,7 +31,7 @@ export const registerSafeAuthProtocol = () =>
     const partition = CONFIG.SAFE_PARTITION;
     const ses = session.fromPartition( partition );
 
-    sysUri.registerUriScheme( appInfo, PROTOCOLS.SAFE_AUTH );
+    // sysUri.registerUriScheme( appInfo, PROTOCOLS.SAFE_AUTH );
     //TODO this should just be handles as routes on browser server...
     ses.protocol.registerBufferProtocol( PROTOCOLS.SAFE_AUTH, ( req, cb ) =>
     {
