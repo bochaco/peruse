@@ -44,11 +44,11 @@
     },
     "test": {
       "system_uri": {
-        "targetDir": "extensions/safe/ffi"
+        "targetDir": "extensions/safe/dist"
       },
       "safe_authenticator": {
         "filename": "safe_authenticator-mock",
-        "targetDir": "ffi"
+        "targetDir": "extensions/safe/dist"
       }
     },
     "win32": {
@@ -61,7 +61,7 @@
       "ENV": {
         "test": {
           "libwinpthread-1": {
-            "targetDir": "extensions/safe/ffi"
+            "targetDir": "extensions/safe/dist"
           }
         }
       }
