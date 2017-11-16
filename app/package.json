@@ -48,7 +48,7 @@
       },
       "safe_authenticator": {
         "filename": "safe_authenticator-mock",
-        "targetDir": "ffi"
+        "targetDir": "extensions/safe/ffi"
       }
     },
     "win32": {

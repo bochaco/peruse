@@ -17,7 +17,7 @@ import * as types from './refs/types';
 import * as typeParser from './refs/parsers';
 import * as typeConstructor from './refs/constructors';
 import CONSTANTS from '../constants';
-import logger from 'logger';
+
 // private variables
 const _registeredClientHandle = Symbol( 'registeredClientHandle' );
 const _nwState = Symbol( 'nwState' );
@@ -29,7 +29,7 @@ const _mDataReqListener = Symbol( 'mDataReq' );
 const _nwStateChangeListener = Symbol( 'nwStateChangeListener' );
 const _reqErrListener = Symbol( 'reqErrListener' );
 const _cbRegistry = Symbol( 'cbRegistry' );
-const _nwStateCb = Symbol( 'nwStateCb' );
+const _netDisconnectCb = Symbol( 'netDisconnectCb' );
 const _decodeReqPool = Symbol( 'decodeReqPool' );
 
 class Authenticator extends SafeLib
@@ -37,8 +37,6 @@ class Authenticator extends SafeLib
     constructor()
     {
         super();
-
-        // logger.info('ipc????', ipc)
         // ipc();
         config.i18n();
         this[_registeredClientHandle] = null;
@@ -52,10 +50,10 @@ class Authenticator extends SafeLib
         this[_reqErrListener] = new Listener();
         this[_cbRegistry] = {};
         this[_decodeReqPool] = {};
-        this[_nwStateCb] = ffi.Callback( types.Void,
-            [types.voidPointer, types.int32, types.int32], ( userData, res, state ) =>
+        this[_netDisconnectCb] = ffi.Callback( types.Void,
+            [types.voidPointer, types.int32, types.int32], () =>
             {
-                this._pushNetworkState( state );
+                this._pushNetworkState( CONSTANTS.NETWORK_STATUS.DISCONNECTED );
             } );
     }
 
@@ -83,9 +81,9 @@ class Authenticator extends SafeLib
         this[_nwState] = state;
     }
 
-    get networkStateCb()
+    get networkDisconnectCb()
     {
-        return this[_nwStateCb];
+        return this[_netDisconnectCb];
     }
 
     getLibStatus()
@@ -96,8 +94,8 @@ class Authenticator extends SafeLib
     fnsToRegister()
     {
         return {
-            create_acc                       : [types.Void, [types.CString, types.CString, types.CString, types.voidPointer, types.voidPointer, 'pointer', 'pointer']],
-            login                            : [types.Void, [types.CString, types.CString, types.voidPointer, types.voidPointer, 'pointer', 'pointer']],
+            create_acc                       : [types.Void, [types.CString, types.CString, types.CString, types.voidPointer, 'pointer', 'pointer']],
+            login                            : [types.Void, [types.CString, types.CString, types.voidPointer, 'pointer', 'pointer']],
             auth_decode_ipc_msg              : [types.Void, [types.voidPointer, types.CString, types.voidPointer, 'pointer', 'pointer', 'pointer', 'pointer', 'pointer']],
             encode_auth_resp                 : [types.Void, [types.voidPointer, types.AuthReqPointer, types.u32, types.bool, types.voidPointer, 'pointer']],
             encode_containers_resp           : [types.Void, [types.voidPointer, types.ContainersReqPointer, types.u32, types.bool, types.voidPointer, 'pointer']],
@@ -109,6 +107,7 @@ class Authenticator extends SafeLib
             auth_apps_accessing_mutable_data : [types.Void, [types.voidPointer, 'pointer', types.u64, 'pointer', 'pointer']],
             auth_free                        : [types.Void, [types.voidPointer]],
             auth_init_logging                : [types.Void, [types.CString, types.voidPointer, 'pointer']],
+            auth_set_additional_search_path  : [types.Void, [types.CString, types.voidPointer, 'pointer']],
             auth_reconnect                   : [types.Void, [types.voidPointer, types.voidPointer, 'pointer']],
             auth_account_info                : [types.Void, [types.voidPointer, 'pointer', 'pointer']]
         };
@@ -184,11 +183,11 @@ class Authenticator extends SafeLib
             try
             {
                 const cb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult],
-                    ( userData, result ) =>
+                    [types.voidPointer, types.FfiResultPointer],
+                    ( userData, resultPtr ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -226,11 +225,11 @@ class Authenticator extends SafeLib
             try
             {
                 const createAccCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.ClientHandlePointer],
-                    ( userData, result, clientHandle ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.ClientHandlePointer],
+                    ( userData, resultPtr, clientHandle ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 && clientHandle.length === 0 )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 && clientHandle.length === 0 )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -252,8 +251,7 @@ class Authenticator extends SafeLib
                     types.allocCString( secret ),
                     types.allocCString( invitation ),
                     types.Null,
-                    types.Null,
-                    this.networkStateCb,
+                    this.networkDisconnectCb,
                     this._getCb( createAccCb ),
                     onResult );
             }
@@ -277,11 +275,11 @@ class Authenticator extends SafeLib
             try
             {
                 const loginCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.ClientHandlePointer],
-                    ( userData, result, clientHandle ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.ClientHandlePointer],
+                    ( userData, resultPtr, clientHandle ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 && clientHandle.length === 0 )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 && clientHandle.length === 0 )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -302,8 +300,7 @@ class Authenticator extends SafeLib
                     types.allocCString( locator ),
                     types.allocCString( secret ),
                     types.Null,
-                    types.Null,
-                    this.networkStateCb,
+                    this.networkDisconnectCb,
                     this._getCb( loginCb ),
                     onResult );
             }
@@ -323,8 +320,6 @@ class Authenticator extends SafeLib
 
     decodeRequest( uri )
     {
-        logger.verbose('decoding unregisterd request', uri);
-
         return new Promise( ( resolve, reject ) =>
         {
             if ( !uri )
@@ -335,8 +330,6 @@ class Authenticator extends SafeLib
 
             if ( !this.registeredClientHandle )
             {
-                logger.verbose('decoding unregisterd request')
-
                 return this._decodeUnRegisteredRequest( parsedURI, resolve, reject );
             }
             const decodeReqAuthCb = this._pushCb( ffi.Callback( types.Void,
@@ -425,7 +418,10 @@ class Authenticator extends SafeLib
                     {
                         const mdata = mDataReq.mdata[i];
                         return this._appsAccessingMData( mdata.name, mdata.type_tag )
-                            .then( ( res ) => ( appAccess[i] = res ) );
+                            .then( ( res ) =>
+                            {
+                                appAccess[i] = res;
+                            } );
                     } ) )
                         .then( () =>
                         {
@@ -437,17 +433,15 @@ class Authenticator extends SafeLib
             const unregisteredCb = this._getUnregisteredClientCb( resolve, reject );
 
             const decodeReqErrorCb = this._pushCb( ffi.Callback( types.Void,
-                [types.voidPointer, types.FfiResult, types.CString], ( userData, result ) =>
+                [types.voidPointer, types.FfiResultPointer, types.CString], ( userData, resultPtr ) =>
                 {
+                    const result = resultPtr.deref();
                     if ( !( this[_reqErrListener] && this[_reqErrListener].len() !== 0 ) )
                     {
                         return;
                     }
                     this[_reqErrListener].broadcast( JSON.stringify( result ) );
                 } ) );
-
-                logger.verbose('ALL CBS PREPPED unregisterd request')
-
             try
             {
                 this.safeLib.auth_decode_ipc_msg(
@@ -494,10 +488,11 @@ class Authenticator extends SafeLib
             try
             {
                 const authDecisionCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.CString], ( userData, result, res ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.CString],
+                    ( userData, resultPtr, res ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 && !res )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 && !res )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -549,10 +544,11 @@ class Authenticator extends SafeLib
             try
             {
                 const contDecisionCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.CString], ( userData, result, res ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.CString],
+                    ( userData, resultPtr, res ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 && !res )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 && !res )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -606,10 +602,11 @@ class Authenticator extends SafeLib
             try
             {
                 const mDataDecisionCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.CString], ( userData, result, res ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.CString],
+                    ( userData, resultPtr, res ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 && !res )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 && !res )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -663,11 +660,11 @@ class Authenticator extends SafeLib
             try
             {
                 const revokeCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.CString],
-                    ( userData, result, res ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.CString],
+                    ( userData, resultPtr, res ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 )
                         {
                             return reject( JSON.stringify( result ) );
                         }
@@ -699,9 +696,10 @@ class Authenticator extends SafeLib
             }
             let cb = null;
             cb = this._pushCb( ffi.Callback( types.Void,
-                [types.voidPointer, types.FfiResult, types.RegisteredAppPointer, types.usize],
-                ( userData, result, appList, len ) =>
+                [types.voidPointer, types.FfiResultPointer, types.RegisteredAppPointer, types.usize],
+                ( userData, resultPtr, appList, len ) =>
                 {
+                    const result = resultPtr.deref();
                     this._deleteFromCb( cb );
                     if ( result.error_code !== 0 )
                     {
@@ -735,11 +733,11 @@ class Authenticator extends SafeLib
                 return reject( new Error( i18n.__( 'messages.unauthorised' ) ) );
             }
             const cb = this._pushCb( ffi.Callback( types.Void,
-                [types.voidPointer, types.FfiResult, types.AccountInfoPointer],
-                ( userData, result, accInfo ) =>
+                [types.voidPointer, types.FfiResultPointer, types.AccountInfoPointer],
+                ( userData, resultPtr, accInfo ) =>
                 {
-                    const code = result.error_code;
-                    if ( code !== 0 )
+                    const result = resultPtr.deref();
+                    if ( result.error_code !== 0 )
                     {
                         return reject( JSON.stringify( result ) );
                     }
@@ -775,11 +773,11 @@ class Authenticator extends SafeLib
                 return reject( new Error( i18n.__( 'messages.unauthorised' ) ) );
             }
             const cb = this._pushCb( ffi.Callback( types.Void,
-                [types.voidPointer, types.FfiResult, types.AppAccessPointer, types.usize],
-                ( userData, result, appAccess, len ) =>
+                [types.voidPointer, types.FfiResultPointer, types.AppAccessPointer, types.usize],
+                ( userData, resultPtr, appAccess, len ) =>
                 {
-                    const code = result.error_code;
-                    if ( code !== 0 )
+                    const result = resultPtr.deref();
+                    if ( result.error_code !== 0 )
                     {
                         return reject( JSON.stringify( result ) );
                     }
@@ -839,8 +837,6 @@ class Authenticator extends SafeLib
 
     _decodeUnRegisteredRequest( parsedUri, resolve, reject )
     {
-        logger.info('in here nowww', parsedUri );
-
         if ( !parsedUri )
         {
             return reject( new Error( 'Invalid URI' ) );
@@ -848,15 +844,11 @@ class Authenticator extends SafeLib
 
         const unregisteredCb = this._getUnregisteredClientCb( resolve, reject );
 
-        logger.info('in here nowww blooowwww' );
-
         const decodeReqErrorCb = this._pushCb( ffi.Callback( types.Void,
-            [types.voidPointer, types.FfiResult, types.CString], () =>
+            [types.voidPointer, types.FfiResultPointer, types.CString], () =>
             {
                 reject( new Error( 'Unauthorised' ) );
             } ) );
-
-            logger.info('in here nowww blooowwww222222' );
 
         try
         {
@@ -880,11 +872,11 @@ class Authenticator extends SafeLib
             try
             {
                 const encodeCb = this._pushCb( ffi.Callback( types.Void,
-                    [types.voidPointer, types.FfiResult, types.CString],
-                    ( userData, result, res ) =>
+                    [types.voidPointer, types.FfiResultPointer, types.CString],
+                    ( userData, resultPtr, res ) =>
                     {
-                        const code = result.error_code;
-                        if ( code !== 0 && !res )
+                        const result = resultPtr.deref();
+                        if ( result.error_code !== 0 && !res )
                         {
                             return reject( JSON.stringify( result ) );
                         }
