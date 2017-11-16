@@ -4,6 +4,7 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-unresolved, import/extensions */
 import ffi from 'ffi';
+import logger from 'logger';
 /* eslint-enable import/no-unresolved, import/extensions */
 import crypto from 'crypto';
 import lodash from 'lodash';
@@ -320,6 +321,7 @@ class Authenticator extends SafeLib
 
     decodeRequest( uri )
     {
+        logger.info('decoding uri', uri)
         return new Promise( ( resolve, reject ) =>
         {
             if ( !uri )
@@ -330,8 +332,12 @@ class Authenticator extends SafeLib
 
             if ( !this.registeredClientHandle )
             {
+                logger.info('dealing with unregisteredddddddddd', parsedURI)
                 return this._decodeUnRegisteredRequest( parsedURI, resolve, reject );
             }
+
+            logger.info('dealing with 222222')
+
             const decodeReqAuthCb = this._pushCb( ffi.Callback( types.Void,
                 [types.voidPointer, types.u32, types.AuthReqPointer], ( userData, reqId, req ) =>
                 {
@@ -365,6 +371,8 @@ class Authenticator extends SafeLib
                         } );
                 } ) );
 
+                logger.info('2')
+
             const decodeReqContainerCb = this._pushCb( ffi.Callback( types.Void,
                 [types.voidPointer, types.u32, types.ContainersReqPointer], ( userData, reqId, req ) =>
                 {
@@ -395,6 +403,7 @@ class Authenticator extends SafeLib
                             resolve();
                         } );
                 } ) );
+                logger.info('3')
 
             const shareMdataCb = this._pushCb( ffi.Callback( types.Void,
                 [types.voidPointer, types.u32, types.ShareMDataReqPointer, 'pointer'],
@@ -429,6 +438,7 @@ class Authenticator extends SafeLib
                             this[_mDataReqListener].broadcast( null, result );
                         } );
                 } ) );
+                logger.info('4')
 
             const unregisteredCb = this._getUnregisteredClientCb( resolve, reject );
 
@@ -444,6 +454,7 @@ class Authenticator extends SafeLib
                 } ) );
             try
             {
+                logger.info('passing on to libs')
                 this.safeLib.auth_decode_ipc_msg(
                     this.registeredClientHandle,
                     types.allocCString( parsedURI ),
@@ -456,6 +467,7 @@ class Authenticator extends SafeLib
             }
             catch ( e )
             {
+                logger.error(e)
                 reject( e );
             }
         } );
@@ -837,21 +849,26 @@ class Authenticator extends SafeLib
 
     _decodeUnRegisteredRequest( parsedUri, resolve, reject )
     {
+        logger.info('dealing with unregisteerered', parsedUri )
         if ( !parsedUri )
         {
             return reject( new Error( 'Invalid URI' ) );
         }
 
         const unregisteredCb = this._getUnregisteredClientCb( resolve, reject );
+        logger.info('>>>>>>>>>>>>>>cb????')
 
         const decodeReqErrorCb = this._pushCb( ffi.Callback( types.Void,
             [types.voidPointer, types.FfiResultPointer, types.CString], () =>
             {
+                logger.error('>>>>>>>>>>>>>>')
                 reject( new Error( 'Unauthorised' ) );
             } ) );
+            logger.info('err>>>>>>>>>>>>>>cb????')
 
         try
         {
+            logger.info('trying to pass on')
             this.safeLib.auth_unregistered_decode_ipc_msg(
                 types.allocCString( parsedUri ),
                 types.Null,
@@ -861,6 +878,7 @@ class Authenticator extends SafeLib
         }
         catch ( err )
         {
+            logger.error('errrrrrrrr', err)
             return reject( err );
         }
     }
@@ -903,6 +921,7 @@ class Authenticator extends SafeLib
             {
                 if ( !reqId )
                 {
+                    logger.error('porblmememmemmsmmsmsmsmssss about reqId')
                     return reject( new Error( 'Invalid Response while decoding Unregisterd client request' ) );
                 }
                 return this._encodeUnRegisteredResp( reqId )

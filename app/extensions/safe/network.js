@@ -3,7 +3,22 @@ import { APP_INFO, CONFIG, SAFE, PROTOCOLS } from 'constants';
 import logger from 'logger';
 import { parse as parseURL } from 'url';
 import { app } from 'electron';
-import {executeScriptInBackground} from 'utils/background-process';
+import { executeScriptInBackground } from 'utils/background-process';
+
+
+// class AuthRequest
+// {
+//     constructor( uri, isUnRegistered, cb )
+//     {
+//         this.id = genRandomString();
+//         this.uri = uri;
+//         this.isUnRegistered = isUnRegistered;
+//         this.cb = cb;
+//         this.res = null;
+//         this.error = null;
+//     }
+// }
+
 
 // TODO tidy separation of auth etc here.
 import { callIPC } from './ffi/ipc';
@@ -62,15 +77,20 @@ export const getAppObj = () =>
     appObj;
 
 
-export const handleSafeAuthAuthentication = ( uri, type ) =>
+export const handleSafeAuthAuthentication = ( uri, type, isUnRegistered ) =>
 {
+    let req = {
+        uri, type, isUnRegistered
+    }
+    //
+
     // ipcRenderer.send( 'decryptRequest', uri, type || CLIENT_TYPES.DESKTOP );
 
-    //ull as in not IPC event here.
+    // ull as in not IPC event here.
     // let script = decryptViaRenderer( uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
 
     // logger.info('our scriptttt', script, uri.toString() );
-    callIPC.decryptRequest( null, uri, type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP )
+    callIPC.decryptRequest( null, req, req.type || AUTH_CONSTANTS.CLIENT_TYPES.DESKTOP );
 
     // executeScriptInBackground( script, ( res ) =>
     // {
@@ -85,17 +105,16 @@ export const handleSafeAuthAuthentication = ( uri, type ) =>
 };
 
 
-
 // TODO. This is a simulation of render process comms. Keeps it clean to one implementation.
 // The actual auth handling should also occur off process.
-let decryptViaRenderer = (req, type) => (`
+const decryptViaRenderer = ( req, type ) => ( `
     (function() {
         const ipcRenderer = require('electron').ipcRenderer;
         ipcRenderer.send('decryptRequest', ${req}, ${type} );
         return 'hithere';
 
       })()
-`)
+` );
 
 
 export const initAnon = async () =>
@@ -107,7 +126,7 @@ export const initAnon = async () =>
         // TODO: register scheme. Use genConnUri not genAuth
         appObj = await initializeApp( APP_INFO.info, null, { libPath: CONFIG.LIB_PATH, logger } );
 
-        //genConnUri
+        // genConnUri
         const authReq = await appObj.auth.genConnUri( {} );
 
         logger.info( 'auth req generated:', authReq );
@@ -118,12 +137,13 @@ export const initAnon = async () =>
         //
         // if ( parseURL( res ).protocol === `${PROTOCOLS.SAFE_AUTH}:` )
         // {
-            const authType = parseSafeAuthUrl( authReq.uri );
+        const authType = parseSafeAuthUrl( authReq.uri );
 
-            if ( authType.action === 'auth' )
-            {
-                handleSafeAuthAuthentication( authReq.uri );
-            }
+        // if ( authType.action === 'auth' )
+        // {
+        //     logger.info( 'fullreq', authReq );
+            handleSafeAuthAuthentication( authReq.uri, null, true );
+        // }
         // }
 
         // TODO: instead of opening authURI, lets pass direct to function of extension.
@@ -141,10 +161,9 @@ export const initAnon = async () =>
 
 export const handleAnonConnResponse = ( url ) =>
 {
-    logger.info('handling this thinggggggggggggggggggggg', url)
+    logger.info( 'handling this thinggggggggggggggggggggg', url );
     handleOpenUrl( url );
-}
-
+};
 
 
 export const handleOpenUrl = async ( res ) =>
@@ -163,15 +182,13 @@ export const handleOpenUrl = async ( res ) =>
     }
 
 
-
-    logger.info( 'still handling uriii')
+    logger.info( 'still handling uriii' );
     // TODO: Open URL proper. IF AUTH. We send req to handle in auth
     // handleSafeAuthAuthentication(url);
 
     // IF NOT + is safe, we handle that.
     try
     {
-
         if ( appObj )
         {
             authFromRes( res );
@@ -201,12 +218,11 @@ export const handleOpenUrl = async ( res ) =>
 };
 
 
-
 export function parseSafeAuthUrl( url, isClient )
 {
-    if( typeof url !== 'string' )
+    if ( typeof url !== 'string' )
     {
-        throw new Error('URl should be a string to parse')
+        throw new Error( 'URl should be a string to parse' );
     }
 
     const safeAuthUrl = {};
