@@ -21,16 +21,16 @@ export const isRunningSpectronTest = !!process.env.IS_SPECTRON;
 
 
 
-let safeNodeAppPath;
+let safeNodeAppPathModifier;
 
 if ( isRunningUnpacked )
 {
     // TODO move to app/package not go up
-    safeNodeAppPath = path.resolve( __dirname, './node_modules/@maidsafe/safe-node-app/src/native' );
+    safeNodeAppPathModifier = '';
 }
 else
 {
-    safeNodeAppPath = path.resolve( __dirname, '..', 'app.asar.unpacked/node_modules/@maidsafe/safe-node-app/src/native' );
+    safeNodeAppPathModifier = '../app.asar.unpacked/';
 }
 
 export const PROTOCOLS = {
@@ -43,7 +43,7 @@ export const PROTOCOLS = {
 export const CONFIG = {
     PORT           : 3984,
     SAFE_PARTITION : 'persist:safe-tab',
-    LIB_PATH       : safeNodeAppPath
+    LIB_PATH       : path.resolve( __dirname, safeNodeAppPathModifier, 'node_modules/@maidsafe/safe-node-app/src/native' )
 };
 
 export const LIB_PATH = {

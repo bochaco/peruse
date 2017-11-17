@@ -38,10 +38,10 @@ describe( 'main window', () =>
 
     afterAll( () =>
     {
-        // if ( app && app.isRunning() )
-        // {
-        //     return app.stop();
-        // }
+        if ( app && app.isRunning() )
+        {
+            return app.stop();
+        }
     } );
 
     test( 'window loaded', async () => await app.browserWindow.isVisible() );
