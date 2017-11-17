@@ -8,7 +8,7 @@ let libLocaleModifier = '';
 
 if( isHot )
 {
-    libLocaleModifier = 'extensions/safe/';
+    // libLocaleModifier = 'extensions/safe/';
     // TODO. Questions about mock. Hmm
 }
 else if( isRunningPackaged )
