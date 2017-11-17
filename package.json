@@ -55,6 +55,10 @@
       {
         "from": "resources/crust.config",
         "to": "${productName}.crust.config"
+      },
+      {
+        "from": "app/extensions/safe/dist",
+        "to": "extensions/safe/dist"
       }
     ],
     "files": [

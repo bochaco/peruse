@@ -77,7 +77,7 @@ app.on( 'window-all-closed', () =>
     // after all windows have been closed
     if ( process.platform !== 'darwin' )
     {
-        app.quit();
+        app.qexit();
     }
 } );
 

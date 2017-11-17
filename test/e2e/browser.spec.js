@@ -11,7 +11,7 @@ import {
 
 import { BROWSER_UI } from './lib/constants';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 25000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000;
 
 const delay = time => new Promise( resolve => setTimeout( resolve, time ) );
 
@@ -112,6 +112,24 @@ describe( 'main window', () =>
 
     } );
 
+    // prod only, and only valid on alpha-2 for now (or wherever this is uploaded).
+    // TODO: We should setup test sites for all network instances to test net config e2e.
+    // it( 'can navigate to a safe:// site', async () =>
+    // {
+    //     const { client } = app;
+    //     const tabIndex = await newTab( app );
+    //     await navigateTo( app, 'aaa.b' );
+    //     await client.waitForExist( BROWSER_UI.ADDRESS_INPUT );
+    //     const address = await client.getValue( BROWSER_UI.ADDRESS_INPUT );
+    //
+    //     await client.windowByIndex( tabIndex );
+    //     await client.waitForExist( 'h1' );
+    //     const text = await client.findElement( 'h1' ).getText();
+    //
+    //     expect( text ).toBe( 'safe:' );
+    //
+    // } );
+
     it( 'can open a new tab + set address', async () =>
     {
         const { client } = app;
@@ -121,6 +139,7 @@ describe( 'main window', () =>
         const address = await client.getValue( BROWSER_UI.ADDRESS_INPUT );
 
         await client.windowByIndex( tabIndex );
+
 
         const clientUrl = await client.getUrl();
 
