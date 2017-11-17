@@ -1,6 +1,6 @@
 import Enum from 'enum';
 import path from 'path';
-import { isHot, isRunningPackaged } from 'constants';
+import { isHot, isRunningPackaged, isRunningSpectronTest } from 'constants';
 
 
 // TODO. Resolve this in a cleaner fashion for unpacked/vs unpacked+testing/vs hot
@@ -10,6 +10,13 @@ if( isHot )
 {
     // libLocaleModifier = 'extensions/safe/';
     // TODO. Questions about mock. Hmm
+}
+else if( isRunningSpectronTest )
+{
+    libLocaleModifier = 'extensions/safe/';
+
+    // libPath = path.resolve( __dirname, '..', 'app.asar.unpacked/node_modules/@maidsafe/safe-node-app/src/native' );
+
 }
 else if( isRunningPackaged )
 {

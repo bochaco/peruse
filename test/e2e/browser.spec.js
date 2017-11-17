@@ -19,7 +19,10 @@ const delay = time => new Promise( resolve => setTimeout( resolve, time ) );
 // have a bad time.
 const app = new Application( {
     path : electron,
-    args : [path.join( __dirname, '..', '..', 'app' )]
+    args : [path.join( __dirname, '..', '..', 'app' )],
+    env : {
+        IS_SPECTRON: true
+    }
 } );
 
 // TODO: Check that it loads a page from network/mock. Check that it loads images from said page.
@@ -35,10 +38,10 @@ describe( 'main window', () =>
 
     afterAll( () =>
     {
-        if ( app && app.isRunning() )
-        {
-            return app.stop();
-        }
+        // if ( app && app.isRunning() )
+        // {
+        //     return app.stop();
+        // }
     } );
 
     test( 'window loaded', async () => await app.browserWindow.isVisible() );

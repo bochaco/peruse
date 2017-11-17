@@ -1,6 +1,6 @@
 import {app} from 'electron';
 import util from 'util';
-import { env, isRunningUnpacked, isRunningPackaged, isRunningProduction, isRunningDevelopment } from 'constants';
+import { env, isRunningUnpacked, isRunningPackaged, isRunningProduction, isRunningDevelopment, isRunningSpectronTest } from 'constants';
 // error, warn, info, verbose, debug, silly
 
 //must be require?
@@ -37,6 +37,8 @@ log.info( 'unpacked?', isRunningUnpacked)
 log.info( 'isRunningPackaged?', isRunningPackaged)
 log.info( 'isRunningProduction?', isRunningProduction)
 log.info( 'isRunningDevelopment?', isRunningDevelopment)
+
+log.info('IS RUNNING SPECTRON', isRunningSpectronTest );
 
 process.on('uncaughtException', (err) => {
   log.error('whoops! there was an uncaught error');

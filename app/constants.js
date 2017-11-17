@@ -17,16 +17,20 @@ export const isHot = process.env.HOT || 0;
 export const isRunningProduction = /^prod/.test( env );
 export const isRunningDevelopment = /^dev/.test( env );
 
-let libPath;
+export const isRunningSpectronTest = !!process.env.IS_SPECTRON;
+
+
+
+let safeNodeAppPath;
 
 if ( isRunningUnpacked )
 {
     // TODO move to app/package not go up
-    libPath = path.resolve( __dirname, './node_modules/@maidsafe/safe-node-app/src/native' );
+    safeNodeAppPath = path.resolve( __dirname, './node_modules/@maidsafe/safe-node-app/src/native' );
 }
 else
 {
-    libPath = path.resolve( __dirname, '..', 'app.asar.unpacked/node_modules/@maidsafe/safe-node-app/src/native' );
+    safeNodeAppPath = path.resolve( __dirname, '..', 'app.asar.unpacked/node_modules/@maidsafe/safe-node-app/src/native' );
 }
 
 export const PROTOCOLS = {
@@ -39,7 +43,7 @@ export const PROTOCOLS = {
 export const CONFIG = {
     PORT           : 3984,
     SAFE_PARTITION : 'persist:safe-tab',
-    LIB_PATH       : libPath
+    LIB_PATH       : safeNodeAppPath
 };
 
 export const LIB_PATH = {
