@@ -15,12 +15,11 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 25000;
 
 const delay = time => new Promise( resolve => setTimeout( resolve, time ) );
 
+// NOTE: Getting errors in e2e for seemingly no reason? Check you havent enabled devtools in menu.js, this makes spectron
+// have a bad time.
 const app = new Application( {
     path : electron,
-    args : [path.join( __dirname, '..', '..', 'app' )],
-  //   env: {
-  //       NODE_ENV: 'dev',
-  // }
+    args : [path.join( __dirname, '..', '..', 'app' )]
 } );
 
 // TODO: Check that it loads a page from network/mock. Check that it loads images from said page.
@@ -92,6 +91,24 @@ describe( 'main window', () =>
         // const clientUrl = removeTrailingSlash ( await client.getUrl() );
 
         expect( parsedUrl.protocol ).toBe( 'safe:' );
+
+    } );
+
+    it( 'has safe-auth:// protocol', async () =>
+    {
+        const { client } = app;
+        const tabIndex = await newTab( app );
+        await navigateTo( app, 'safe-auth://example.com' );
+        await client.waitForExist( BROWSER_UI.ADDRESS_INPUT );
+        const address = await client.getValue( BROWSER_UI.ADDRESS_INPUT );
+
+        await client.windowByIndex( tabIndex );
+
+        const clientUrl = await client.getUrl();
+        const parsedUrl = urlParse( clientUrl );
+        // const clientUrl = removeTrailingSlash ( await client.getUrl() );
+
+        expect( parsedUrl.protocol ).toBe( 'safe-auth:' );
 
     } );
 
