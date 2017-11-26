@@ -102,6 +102,7 @@ class ReqQueue
                 ipcEvent.sender.send( self.resChannelName, self.req );
             }
 
+            logger.info('this.req.uri', this.req.uri, res)
             if ( this.req.uri === global.browserReqUri )
             {
                 handleAnonConnResponse( parseResUrl( res ) );
