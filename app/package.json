@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@maidsafe/safe-node-app": "0.5.0",
+    "@maidsafe/safe-node-app": "https://github.com/bochaco/safe_app_nodejs#app-id-unreg-auth-reqs",
     "deps_downloader": "https://s3.eu-west-2.amazonaws.com/deps-downloader/deps_downloader-0.1.0.tgz",
     "enum": "2.5.0",
     "ffi": "2.2.0",
