@@ -47,7 +47,7 @@ before_deploy:
 - cd release
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ditto -c -k --sequesterRsrc --keepParent ${RELEASE} ${RELEASE}.zip;
   fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then - zip -r -q ${RELEASE}.zip ${RELEASE};;
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then zip -r -q ${RELEASE}.zip ${RELEASE};
   fi
 - cd ..
 - ls release
